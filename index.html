@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PrismLabs — the room is the interface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#EFE6D2; --cream-2:#E6DBC2; --cream-3:#DCCFB1; --paper:#F6EFDC;
+    --green:#1F3A2C; --green-2:#2A4A39; --green-soft:#3F5C4E; --green-line:#5C7368; --green-deep:#0F1F18;
+    --orange:#E26A2C; --orange-2:#F0A24A; --orange-deep:#B6481E;
+    --ink:#1B2A20; --mute:#6E6650; --rule:#C9BC9C;
+    --black:#0E0E0C; --black-2:#070707;
+    --maxw:1180px;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--black); color:var(--ink); font-family:'Geist',system-ui,sans-serif;
+    font-feature-settings:"ss01","ss02","cv11"; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--orange); color:#fff; }
+  .mono{ font-family:'Geist Mono',ui-monospace,monospace; }
+  .serif{ font-family:'Instrument Serif',serif; font-style:italic; }
+  .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 36px; }
+
+  .lockup{ display:flex; align-items:center; gap:14px; }
+  .lockup .mark{ display:block; }
+  .lockup .word{ line-height:.86; display:flex; flex-direction:column; }
+  .lockup .j{ font-family:'Instrument Serif',serif; font-style:italic; color:var(--orange); letter-spacing:-.01em; }
+  .lockup .l{ font-family:'Geist',sans-serif; font-weight:800; letter-spacing:-.04em; }
+
+  .marker{ font-family:'Geist Mono',monospace; font-size:13px; letter-spacing:.3em; text-transform:uppercase; color:var(--mute); }
+  .marker.orange{ color:var(--orange); } .marker.amber{ color:var(--orange-2); }
+  .display{ font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; line-height:1.0; letter-spacing:-.01em; }
+
+  .tag{ display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.1em; padding:5px 10px; border-radius:999px; background:var(--cream-3); color:var(--ink); }
+  .tag.green{ background:var(--green); color:var(--cream); } .tag.orange{ background:var(--orange); color:#fff; }
+
+  .btn{ display:inline-flex; align-items:center; gap:9px; font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    padding:13px 20px; border-radius:7px; background:var(--ink); color:var(--cream); border:1px solid var(--ink); cursor:pointer; transition:transform .18s, box-shadow .22s; }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.orange{ background:var(--orange); border-color:var(--orange); color:#fff; }
+  .btn.orange:hover{ box-shadow:0 8px 30px -8px rgba(226,106,44,.7); }
+  .btn.on-dark{ background:var(--cream); color:var(--ink); border-color:var(--cream); }
+  .btn.ghost.on-dark{ background:transparent; color:var(--cream); border-color:var(--green-line); }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  @media(prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  /* NAV */
+  nav{ position:fixed; inset:0 0 auto 0; z-index:60; display:flex; justify-content:center; transition:background .4s, backdrop-filter .4s, border-color .4s; border-bottom:1px solid transparent; }
+  nav.scrolled{ background:rgba(14,14,12,0.78); backdrop-filter:blur(14px); border-bottom:1px solid rgba(92,115,104,.3); }
+  .navin{ width:100%; max-width:var(--maxw); padding:16px 36px; display:flex; align-items:center; justify-content:space-between; }
+  .navlinks{ display:flex; align-items:center; gap:30px; }
+  .navlinks a:not(.btn){ font-family:'Geist Mono',monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:rgba(239,230,210,.7); transition:color .2s; }
+  .navlinks a:not(.btn):hover{ color:var(--orange-2); }
+  @media(max-width:900px){ .navlinks a:not(.btn){ display:none; } }
+
+  /* HERO */
+  .hero{ position:relative; min-height:100svh; display:flex; align-items:center; background:var(--black); overflow:hidden; }
+  .hero-media{ position:absolute; inset:0; z-index:0; background-image:radial-gradient(rgba(239,230,210,.05) 1px, transparent 1px); background-size:26px 26px; }
+  /* USER VIDEO: drop a <video autoplay muted loop playsinline><source src="reel.mp4"></video> inside .hero-media */
+  .hero-media video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.62; }
+  .hero .signal{ position:absolute; left:50%; top:50%; width:760px; height:760px; transform:translate(-50%,-50%); z-index:0; pointer-events:none; }
+  .hero .ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border:1px solid var(--orange); border-radius:50%; opacity:0; animation:ripple 4.2s infinite ease-out; }
+  .hero .ring:nth-child(2){ animation-delay:1.4s; } .hero .ring:nth-child(3){ animation-delay:2.8s; }
+  @keyframes ripple{ 0%{ width:40px; height:40px; opacity:.55;} 100%{ width:680px; height:680px; opacity:0;} }
+  .hero .core{ position:absolute; left:50%; top:50%; width:16px; height:16px; transform:translate(-50%,-50%); border-radius:50%; background:var(--orange); box-shadow:0 0 40px 6px rgba(226,106,44,.55); }
+  .hero .veil{ position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(14,14,12,.62), rgba(14,14,12,.3) 36%, rgba(14,14,12,.5) 68%, rgba(14,14,12,.92)), radial-gradient(60% 60% at 50% 50%, transparent, rgba(14,14,12,.4) 100%); }
+  .hero .wrap{ position:relative; z-index:2; text-align:center; }
+  .hero .eyebrow{ color:#9b9682; font-family:'Geist Mono',monospace; font-size:13px; letter-spacing:.3em; text-transform:uppercase; display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
+  .hero .eyebrow span{ color:var(--orange-2); }
+  .hero h1{ margin:26px 0 0; font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; color:var(--cream); font-size:clamp(50px,9vw,130px); line-height:.94; letter-spacing:-.01em; }
+  .hero h1 .o{ color:var(--orange); }
+  .hero .sub{ margin:28px auto 0; max-width:54ch; font-size:clamp(16px,1.5vw,20px); line-height:1.6; color:rgba(239,230,210,.72); font-weight:300; }
+  .hero .cta{ margin-top:36px; display:flex; gap:13px; justify-content:center; flex-wrap:wrap; }
+  .hero .credit, .hero .credit2{ position:absolute; bottom:22px; z-index:2; color:#4d4a3f; font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.18em; }
+  .hero .credit{ left:36px; } .hero .credit2{ right:36px; }
+
+  /* SECTION */
+  section.band{ position:relative; padding:120px 0; }
+  .band.cream{ background:var(--cream); background-image:radial-gradient(rgba(31,58,44,.08) 1px, transparent 1px); background-size:22px 22px; color:var(--ink); }
+  .band.green{ background:linear-gradient(180deg,#243B2E,#0F1F18); color:var(--cream); }
+  .band.green::before{ content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,210,.05) 1px, transparent 1px); background-size:24px 24px; pointer-events:none; }
+  .band.dark{ background:var(--black); color:var(--cream); background-image:radial-gradient(rgba(239,230,210,.04) 1px, transparent 1px); background-size:22px 22px; }
+  .band.deep{ background:var(--green-deep); color:var(--cream); }
+  .band > .wrap{ position:relative; z-index:1; }
+  .sechead .display{ font-size:clamp(34px,5.2vw,64px); margin:18px 0 0; }
+
+  /* PROBLEM */
+  .frags{ position:relative; margin-top:44px; min-height:300px; }
+  .frag{ font-family:'Instrument Serif',serif; font-style:italic; color:var(--ink); opacity:.34; white-space:nowrap; }
+  .frags .headline{ position:relative; z-index:2; }
+  @media(max-width:760px){ .frag{ display:none; } }
+  .burden{ display:inline-block; }
+
+  /* DEVICE */
+  .device{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+  @media(max-width:880px){ .device{ grid-template-columns:1fr; gap:40px; } }
+  .device .stage{ position:relative; display:grid; place-items:center; min-height:440px; border:1px solid var(--green-line); border-radius:18px; background:radial-gradient(120% 100% at 50% 0%, rgba(240,162,74,.10), transparent 60%); overflow:hidden; }
+  .device .stage::before{ content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(239,230,210,.06) 1px, transparent 1px); background-size:18px 18px; }
+  .device .proj{ animation:projpulse 3.4s infinite ease-in-out; transform-origin:center; }
+  @keyframes projpulse{ 0%,100%{ opacity:.85;} 50%{ opacity:1;} }
+  .callouts{ display:grid; gap:0; margin-top:34px; }
+  .callout{ display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center; padding:18px 0; border-top:1px solid rgba(92,115,104,.4); }
+  .callout:last-child{ border-bottom:1px solid rgba(92,115,104,.4); }
+  .callout .ic{ width:9px; height:9px; border-radius:50%; background:var(--orange); }
+  .callout .k{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange-2); }
+  .callout .v{ font-size:15px; color:rgba(239,230,210,.7); font-family:'Geist Mono',monospace; }
+
+  /* PIPELINE */
+  .pipe{ display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:56px; }
+  @media(max-width:980px){ .pipe{ grid-template-columns:1fr 1fr; gap:16px; } }
+  @media(max-width:560px){ .pipe{ grid-template-columns:1fr; } }
+  .stn{ background:var(--paper); border:1px solid var(--rule); border-radius:14px; padding:22px 20px; position:relative; }
+  .stn .st{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--orange); }
+  .stn h3{ font-family:'Geist',sans-serif; font-weight:700; font-size:21px; color:var(--green); margin:8px 0 6px; letter-spacing:-.02em; }
+  .stn p{ margin:0; font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--mute); line-height:1.5; }
+  .stn .arrow{ position:absolute; right:-11px; top:50%; transform:translateY(-50%); color:var(--green); opacity:.45; z-index:2; }
+  @media(max-width:980px){ .stn .arrow{ display:none; } }
+
+  /* DEMOS */
+  .demos{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:56px; }
+  @media(max-width:1000px){ .demos{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:560px){ .demos{ grid-template-columns:1fr; } }
+  .demo .film{ position:relative; height:170px; border-radius:14px; overflow:hidden; border:1px solid var(--green-line); background:var(--green-deep);
+    background-image:radial-gradient(rgba(239,230,210,.06) 1px, transparent 1px); background-size:16px 16px; }
+  .demo .film > img, .demo .film > video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+  .demo .film::after{ content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg, rgba(10,20,15,.35), transparent 30%, transparent 56%, rgba(10,20,15,.85)); }
+  .demo.feat{ grid-column:span 2; grid-row:span 2; }
+  .demo.feat .film{ height:100%; min-height:356px; }
+  @media(max-width:1000px){ .demo.feat{ grid-column:span 2; grid-row:auto; } .demo.feat .film{ min-height:200px; } }
+  @media(max-width:560px){ .demo.feat{ grid-column:span 1; } }
+  .demo .film .tg{ position:absolute; top:14px; left:16px; z-index:2; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.2em; color:var(--orange-2); }
+  .demo .film .lb{ position:absolute; left:16px; right:16px; bottom:14px; z-index:2; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:rgba(239,230,210,.6); line-height:1.5; }
+  .demo .meta{ padding:15px 2px 0; }
+  .demo h4{ font-family:'Geist',sans-serif; font-weight:800; font-size:20px; margin:0; color:var(--cream); letter-spacing:-.03em; }
+  .demo p{ margin:7px 0 0; font-size:13.5px; line-height:1.5; color:rgba(239,230,210,.68); }
+  .demo .beat{ color:var(--orange-2); }
+
+  /* WHERE */
+  .uses{ display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-top:56px; border-top:1px solid var(--rule); }
+  @media(max-width:820px){ .uses{ grid-template-columns:1fr 1fr; } }
+  .use{ position:relative; padding:30px 24px 32px 0; border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); transition:transform .3s cubic-bezier(.2,.7,.2,1); }
+  .use::before{ content:""; position:absolute; top:-1px; left:0; height:2px; width:0; background:var(--orange); transition:width .35s cubic-bezier(.2,.7,.2,1); }
+  .use:hover{ transform:translateY(-4px); }
+  .use:hover::before{ width:calc(100% - 24px); }
+  .use:nth-child(4n){ border-right:0; padding-right:0; }
+  .use:nth-child(4n):hover::before{ width:100%; }
+  .use .top{ display:flex; align-items:center; justify-content:space-between; }
+  .use .num{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; color:var(--orange); font-weight:600; }
+  .use .gl{ color:var(--green); opacity:.55; transition:opacity .3s, color .3s; }
+  .use:hover .gl{ opacity:1; color:var(--orange); }
+  .use h4{ font-family:'Geist',sans-serif; font-weight:800; font-size:25px; margin:18px 0 12px; color:var(--green); letter-spacing:-.03em; }
+  .use p{ margin:0; font-size:15px; line-height:1.55; color:var(--ink); font-weight:400; }
+  .use .surf{ display:block; margin-top:16px; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--mute); }
+  @media(max-width:820px){ .use:nth-child(2n){ border-right:0; padding-right:0; } .use:nth-child(2n+1){ padding-right:24px; } }
+
+  /* AMBIENT cards */
+  .ambient{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:56px; }
+  @media(max-width:820px){ .ambient{ grid-template-columns:1fr; } }
+  .acard{ border:1px solid rgba(92,115,104,.4); border-radius:16px; padding:28px; background:rgba(31,58,44,.25); }
+  .acard .k{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange-2); font-weight:600; }
+  .acard h4{ font-family:'Geist',sans-serif; font-weight:800; font-size:23px; margin:14px 0 12px; color:var(--cream); letter-spacing:-.03em; }
+  .acard p{ margin:0; font-size:15px; line-height:1.6; color:rgba(239,230,210,.78); font-weight:400; }
+
+  /* NUMBERS */
+  .nums{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:30px; margin-top:50px; }
+  @media(max-width:820px){ .nums{ grid-template-columns:1fr 1fr; gap:34px; } }
+  .num{ border-top:1px solid var(--green-2); padding-top:20px; }
+  .num .big{ font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(58px,7vw,96px); line-height:.86; letter-spacing:-.02em; }
+  .num .small{ font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:rgba(239,230,210,.6); margin-top:12px; line-height:1.5; }
+
+  /* WHAT WE'VE BUILT */
+  .built-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:54px; }
+  @media(max-width:980px){ .built-grid{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:560px){ .built-grid{ grid-template-columns:1fr; } }
+  .bcard{ background:var(--paper); border:1px solid var(--rule); border-radius:14px; padding:24px 22px; }
+  .bcard .chk{ display:inline-grid; place-items:center; width:26px; height:26px; border-radius:7px; background:var(--green); color:var(--cream); font-size:14px; font-weight:700; }
+  .bcard h4{ font-family:'Geist',sans-serif; font-weight:800; font-size:18px; color:var(--green); margin:16px 0 8px; letter-spacing:-.02em; }
+  .bcard p{ margin:0; font-size:14px; line-height:1.55; color:var(--ink); font-weight:400; }
+  .pmf{ margin-top:24px; background:var(--green); color:var(--cream); border-radius:16px; padding:36px 40px; display:grid; grid-template-columns:1fr auto; gap:30px 60px; align-items:center; }
+  @media(max-width:820px){ .pmf{ grid-template-columns:1fr; gap:26px; } }
+  .pmf-k{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange-2); font-weight:600; }
+  .pmf-q{ font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(26px,3vw,38px); line-height:1.25; margin:14px 0 0; color:var(--cream); }
+  .pmf-q .q{ color:var(--orange-2); }
+  .pmf-stats{ display:grid; gap:18px; min-width:230px; }
+  .pmf-stats > div{ display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:baseline; border-top:1px dashed rgba(239,230,210,.2); padding-top:14px; }
+  .pmf-stats b{ font-family:'Instrument Serif',serif; font-style:italic; font-size:34px; color:var(--orange); line-height:1; }
+  .pmf-stats span{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:rgba(239,230,210,.72); line-height:1.4; }
+
+  /* FOUNDER */
+  .founder{ display:grid; grid-template-columns:1fr 1.15fr; gap:60px; align-items:start; }
+  @media(max-width:880px){ .founder{ grid-template-columns:1fr; gap:36px; } }
+  .founder .note p{ font-size:17px; line-height:1.7; color:var(--ink); margin:0 0 18px; }
+  .founder .note .big{ font-family:'Instrument Serif',serif; font-style:italic; font-size:30px; line-height:1.3; color:var(--green); }
+  .founder .sig{ font-family:'Instrument Serif',serif; font-style:italic; font-size:26px; color:var(--orange); margin-top:8px; }
+  .whycard{ background:var(--green); color:var(--cream); border-radius:16px; padding:32px; }
+  .whycard h4{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange-2); margin:0 0 20px; }
+  .whyrow{ display:flex; gap:14px; padding:14px 0; border-top:1px dashed rgba(239,230,210,.18); font-size:15px; line-height:1.5; }
+  .whyrow:first-of-type{ border-top:0; }
+  .whyrow b{ color:var(--cream); font-weight:600; }
+  .whyrow .dot{ flex:none; width:7px; height:7px; border-radius:50%; background:var(--orange); margin-top:7px; }
+
+  /* CLOSING */
+  .closing{ background:var(--black-2); color:var(--cream); text-align:center; padding:170px 0; position:relative; overflow:hidden; }
+  .closing::before{ content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:120%; height:120%; background:radial-gradient(ellipse 40% 40% at 50% 50%, rgba(226,106,44,.16), transparent 70%); }
+  .closing .display{ position:relative; font-size:clamp(40px,7vw,100px); }
+  .closing .display .o{ color:var(--orange); }
+  .closing .cta{ position:relative; margin-top:42px; display:flex; gap:13px; justify-content:center; flex-wrap:wrap; }
+
+  footer{ background:var(--black-2); color:var(--cream); border-top:1px solid #1f1f1a; padding:40px 0 48px; }
+  .footin{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+  footer .meta{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#7e7964; }
+</style>
+</head>
+<body id="top">
+
+<!-- ===== reusable flask mark ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="jl-mark" viewBox="0 0 64 64">
+    <g transform="translate(32 32) rotate(-12) translate(-32 -32)">
+      <rect x="27" y="8" width="10" height="14" rx="1.6" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M22 22 L42 22 L54 50 A6 6 0 0 1 48 56 L16 56 A6 6 0 0 1 10 50 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M14 44 Q22 41 32 44 T50 44" stroke="currentColor" stroke-width="2" fill="none" opacity=".55"/>
+      <circle cx="32" cy="38" r="2.6" fill="#E26A2C"/>
+      <path d="M26 38 a6 6 0 0 1 12 0" stroke="#E26A2C" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M21 38 a11 11 0 0 1 22 0" stroke="#E26A2C" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".75"/>
+    </g>
+  </symbol>
+</defs></svg>
+
+<!-- ===== NAV ===== -->
+<nav id="nav">
+  <div class="navin">
+    <a class="lockup" href="#top" aria-label="PrismLabs">
+      <svg class="mark" width="34" height="34" style="color:var(--cream)"><use href="#jl-mark"/></svg>
+      <span class="word"><span class="j" style="font-size:19px;">Prism</span><span class="l" style="font-size:19px; color:var(--cream);">Labs</span></span>
+    </a>
+    <div class="navlinks">
+      <a href="#problem">The problem</a>
+      <a href="#device">The device</a>
+      <a href="#how">How it works</a>
+      <a href="#demos">Demos</a>
+      <a href="#access" class="btn orange">Request a demo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="hero-media">
+    <video autoplay muted loop playsinline preload="auto" poster="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/434069040_708526774524906_7376808912820184909_n.png?_nc_cat=104&ccb=1-7&_nc_sid=f537c7&_nc_ohc=YMWHRzyzNGIQ7kNvwHFSwRz&_nc_oc=Adr9cxOYple-UiPNRQRm31G1_9WysvOsF60V9oGWj1HHLX_S1IwW3uFf96HCqavcN5yhkkpSnamw_1g6uppS_0NV&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&oh=00_Af9x7Sl3T3-GJMK4_sNCRedeyCaFCIrXWK8vesWz6us53A&oe=6A391A15">
+      <source src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQPBVsbx3KNZFC7N-MpwdMi7CdQlOAOYCJKfPQREFP7dF8Cjd1Id4t_jJzBNXcceQXmmwtG1sshRWCZpFSOj1JtH.mp4?strext=1&_nc_cat=107&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=HkD9gikFEZsQ7kNvwFGL6bx&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNzIwLmRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHAiLCJ4cHZfYXNzZXRfaWQiOjY3NjU4NjQxNzg3OTk3MiwiYXNzZXRfYWdlX2RheXMiOjU5NiwidmlfdXNlY2FzZV9pZCI6MTA4MjEsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=f25a9b8f215f886d&_nc_vs=HBkcFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HR3d2dmh1RG1fSjJFRWNEQUxmTUxpcmJKQVF0YnY0R0FBQUYVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmyO7H0cHWswIVAigCQzMsF0A0AAAAAAAAGBlkYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwEQB1AmWKqQEA&_nc_gid=RXTIzCxHc0D35CJivXpUqg&_nc_ss=7b289&_nc_zt=28&oh=00_Af83JVbAAXvow4NxuDnj8_m19XHlJZF_QOmI81JAHD6gIQ&oe=6A39332F&bitrate=0&tag=dash_h264-basic-gen2_720p" type="video/mp4">
+    </video>
+  </div>
+  <div class="signal">
+    <span class="ring"></span><span class="ring"></span><span class="ring"></span>
+    <span class="core"></span>
+  </div>
+  <div class="veil"></div>
+  <div class="wrap">
+    <div class="eyebrow">no headset<span>·</span>no glasses<span>·</span>no phone<span>·</span>no screen</div>
+    <h1>the room is<br/>the <span class="o">interface</span>.</h1>
+    <p class="sub">PrismLabs builds the first ambient operating system for physical space — one ceiling device that turns every wall, door and table into an intelligent display, then dissolves back to a bare room.</p>
+    <div class="cta">
+      <a href="#access" class="btn orange">Request a demo</a>
+      <a href="#how" class="btn on-dark">See how it works</a>
+    </div>
+  </div>
+  <div class="credit">PL · 002 / 2026</div>
+  <div class="credit2">PRE-SEED · OPEN</div>
+</header>
+
+<!-- ===== PROBLEM ===== -->
+<section class="band cream" id="problem">
+  <div class="wrap">
+    <div class="reveal"><span class="marker">─── 01 · the problem</span></div>
+    <div class="frags">
+      <div class="headline reveal">
+        <h2 class="display" style="font-size:clamp(40px,6.5vw,84px); max-width:18ch;">every attempt at AR makes you <span style="color:var(--orange)">carry the display.</span></h2>
+        <p style="max-width:48ch; font-size:19px; line-height:1.6; color:var(--mute); margin-top:24px;">Strap it to your face. Hold up your phone. Look through a lens. The fundamental error is always the same — so we moved the display off the body and into the environment. The room carries the intelligence; you just live in it.</p>
+      </div>
+      <div class="frag burden" style="left:60%; top:2%; font-size:28px; transform:rotate(3deg);">&ldquo;$3,500 on your face&rdquo;</div>
+      <div class="frag burden" style="left:55%; top:32%; font-size:26px; transform:rotate(-2deg);">&ldquo;glasses that can&rsquo;t fit a real display&rdquo;</div>
+      <div class="frag burden" style="left:62%; top:60%; font-size:30px; transform:rotate(4deg);">&ldquo;a phone between you and the world&rdquo;</div>
+      <div class="frag burden" style="left:52%; top:84%; font-size:24px; transform:rotate(-1deg);">&ldquo;taken off after thirty minutes&rdquo;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEVICE ===== -->
+<section class="band green" id="device">
+  <div class="wrap">
+    <span class="marker amber reveal" style="display:block; margin-bottom:18px;">─── 02 · the device</span>
+    <div class="device">
+      <div class="stage reveal">
+        <svg width="280" height="320" viewBox="0 0 280 320">
+          <defs>
+            <linearGradient id="pen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2A20"/><stop offset="1" stop-color="#0a140f"/></linearGradient>
+            <linearGradient id="cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E26A2C" stop-opacity=".5"/><stop offset="1" stop-color="#E26A2C" stop-opacity="0"/></linearGradient>
+          </defs>
+          <!-- ceiling -->
+          <line x1="20" y1="40" x2="260" y2="40" stroke="#5C7368" stroke-width="2"/>
+          <rect x="131" y="40" width="18" height="14" fill="#0a140f" stroke="#5C7368" stroke-width="1.5"/>
+          <!-- fixture body -->
+          <rect x="92" y="54" width="96" height="48" rx="16" fill="url(#pen)" stroke="#5C7368" stroke-width="2"/>
+          <rect x="92" y="54" width="96" height="48" rx="16" fill="none" stroke="rgba(240,162,74,.15)" stroke-width="1"/>
+          <!-- light cone -->
+          <g class="proj">
+            <path d="M114 100 L72 262 L208 262 L166 100 Z" fill="url(#cone)"/>
+            <line x1="40" y1="262" x2="240" y2="262" stroke="#5C7368" stroke-width="1.5"/>
+            <rect x="104" y="248" width="72" height="12" rx="2" fill="#E26A2C" opacity=".9"/>
+          </g>
+          <!-- aperture rings -->
+          <ellipse cx="140" cy="100" rx="26" ry="7" fill="#0a140f" stroke="#3F5C4E"/>
+          <circle cx="140" cy="100" r="9" fill="none" stroke="#F0A24A" stroke-width="2"/>
+          <circle cx="140" cy="100" r="4" fill="#E26A2C"/>
+        </svg>
+        <div class="mono" style="position:absolute; left:18px; top:16px; font-size:10px; letter-spacing:.18em; color:var(--orange-2);">● ceiling-01 · awake</div>
+        <div class="mono" style="position:absolute; left:18px; bottom:14px; font-size:10px; letter-spacing:.1em; color:rgba(239,230,210,.5);">fw 0.4.1-α · mapping room</div>
+      </div>
+      <div class="reveal">
+        <h2 class="display" style="font-size:clamp(34px,4.8vw,56px); color:var(--cream);">so we built one thing.</h2>
+        <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:26px; color:var(--orange-2); margin:14px 0 0;">a ceiling. a projector. a room that sees.</p>
+        <p style="font-size:16px; line-height:1.6; color:rgba(239,230,210,.6); margin:16px 0 0; max-width:46ch;">It mounts overhead and reads as architecture — a calm circle you forget is there. The shroud raises and lowers like a gaze: open and looking, or closed and at rest.</p>
+        <div class="callouts">
+          <div class="callout"><span class="ic"></span><span class="k">sees</span><span class="v">infrared + depth · in the dark</span></div>
+          <div class="callout"><span class="ic"></span><span class="k">aims</span><span class="v">short-throw · 360° motor</span></div>
+          <div class="callout"><span class="ic"></span><span class="k">projects</span><span class="v">additive light · perspective-corrected</span></div>
+          <div class="callout"><span class="ic"></span><span class="k">disappears</span><span class="v">only light shows · black stays invisible</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="band cream" id="how">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker">─── 03 · what it does, quietly</span>
+      <h2 class="display">it sees the room, then answers it.</h2>
+      <p style="max-width:50ch; font-size:18px; line-height:1.6; color:var(--mute); margin-top:22px;">Content blooms up from the surface when you need it, holds calm, and dissolves back to a bare wall when you don&rsquo;t. No buttons. No app to open.</p>
+    </div>
+    <div class="pipe">
+      <div class="stn reveal"><div class="st">STAGE 1</div><h3>SEE</h3><p>infrared + depth scan</p><span class="arrow">→</span></div>
+      <div class="stn reveal"><div class="st">STAGE 2</div><h3>UNDERSTAND</h3><p>real-time spatial model</p><span class="arrow">→</span></div>
+      <div class="stn reveal"><div class="st">STAGE 3</div><h3>AIM</h3><p>360° short-throw</p><span class="arrow">→</span></div>
+      <div class="stn reveal"><div class="st">STAGE 4</div><h3>PROJECT</h3><p>additive light · corrected</p><span class="arrow">→</span></div>
+      <div class="stn reveal"><div class="st">STAGE 5</div><h3>DISSOLVE</h3><p>back to bare surface</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEMOS ===== -->
+<section class="band dark" id="demos">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker orange">─── 04 · the demo library</span>
+      <h2 class="display" style="color:var(--cream);">eight moments that sell themselves.</h2>
+      <p style="max-width:48ch; font-size:18px; line-height:1.6; color:rgba(239,230,210,.6); margin-top:22px;">Each scenario turns on a single magic beat. These are what gets filmed.</p>
+    </div>
+    <div class="demos">
+      <div class="demo feat reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQNLQ8tbXQbXMyqWss92p3nvYiYeGTApQtvSH3nBZmyjxd4LwaQu58PRAwVHBfWikDlYalgcM_RuoaO16FCySBLuhXc5JFd_jl3YjTxU6txKYw.mp4?_nc_cat=110&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=GvDdn3S8mPcQ7kNvwGbuYjI&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoxNzQxMDkwMTY2NTI4ODM4LCJhc3NldF9hZ2VfZGF5cyI6MzMxLCJ2aV91c2VjYXNlX2lkIjoxMDgyNSwiZHVyYXRpb25fcyI6ODYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=db0d412226623d4a&_nc_vs=HBksFQIYRWZiX3Blcm1hbmVudC8zRjRFNkFFNEU0M0ZERUY0RjZGMDg0MUQ4ODJDNDBCQ19tdF8yX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhAZmJfcGVybWFuZW50LzhDNDNDMTgwOTRBNjg1NEE2Qjg4MDJDREFGMTQyNEEwX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACaM7a7O5OCXBhUCKAJDMywXQFWo9cKPXCkYGWRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHARAHUCZZKpAQA&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&_nc_zt=28&oh=00_Af8cngQwv722urmx76wBvCjimwoflev3UgqjJkiCO0OLEw&oe=6A391E86&bitrate=749601&tag=dash_h264-basic-gen2_720p"></video><span class="tg">05 · THE COMPANION</span><span class="lb">a softly glowing figure walks wall to wall as you move</span></div>
+        <div class="meta"><h4>The Companion</h4><p><span class="beat">Magic beat:</span> the assistant has a body and a place in the room — not a voice from a puck.</p></div>
+      </div>
+      <div class="demo reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNSY8su3O249CIJhS6Ret984KQR9YVb7JPY8WSV8oGgCSow1l7Qz7xvUxeJQ3Wt9N5MrBp9kQ_zbkbESQu92iHc.mp4?strext=1&_nc_cat=101&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=ny4tXWHDny8Q7kNvwGxpsFV&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTkyMC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl8xMDgwcCIsInhwdl9hc3NldF9pZCI6OTIzMzIzNDI2MTEzMDA2LCJhc3NldF9hZ2VfZGF5cyI6NTk2LCJ2aV91c2VjYXNlX2lkIjoxMDgyMSwiZHVyYXRpb25fcyI6MzAsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=9beefba3363eed5b&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQmxzdVJ1YXdmeWE0aE1DQUk1M3hKTUF0NWdlYnY0R0FBQUYVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQVg3cWhrYXlIUzVHRllEQUNZUVZJa3hLWkJ4YnY0R0FBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm3Jeczb_wowMVAigCQzMsF0A-AAAAAAAAGBpkYXNoX2gyNjQtYmFzaWMtZ2VuMl8xMDgwcBEAdQJliqkBAA&_nc_gid=RXTIzCxHc0D35CJivXpUqg&_nc_ss=7b289&_nc_zt=28&oh=00_Af_H_bAid8PKnkhVYObnuXIkY0OfGEqnqRxIeMSoJTctzg&oe=6A3916B5&bitrate=1617930&tag=dash_h264-basic-gen2_1080p"></video><span class="tg">04 · DOORBELL</span><span class="lb">the front door turns transparent</span></div>
+        <div class="meta"><h4>Doorbell Passthrough</h4><p><span class="beat">Beat:</span> you see through your own door.</p></div>
+      </div>
+      <div class="demo reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQMHEeAh1dvQ3QKO0Y_FPokFwcDHh6PbpVMA9snpTurFrb_VKpM7w219XS8YLcaK3NC-gHN53De8gqsQtUpTIuMO.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=tN0QbhjheqQQ7kNvwGum1pf&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTkxNTU1OTIwODg2MzAyOSwiYXNzZXRfYWdlX2RheXMiOjgxOSwidmlfdXNlY2FzZV9pZCI6MTAxMjgsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&_nc_zt=28&oh=00_Af_f0F_g7X8P219gCV3-Ksz_J2XU8QCCQvchc3CBiw2r4w&oe=6A3915DF&bitrate=359126&tag=sve_sd"></video><span class="tg">00 · KITCHEN</span><span class="lb">recipe tracks the cook&rsquo;s hands</span></div>
+        <div class="meta"><h4>The Kitchen</h4><p><span class="beat">Beat:</span> steps follow the work, not a propped phone.</p></div>
+      </div>
+      <div class="demo reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNL_sPL6371pgpOIm87P1cXaPGN8MunUVaiosz2-jP3cy-Y3DccDZHCkHp_buisad2dyj6RUiYNffulYttE27H6.mp4?strext=1&_nc_cat=100&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=5U1-qLH2JSwQ7kNvwGG3zUg&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNzIwLmRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHAiLCJ4cHZfYXNzZXRfaWQiOjc1Mzk2NzU5Mjg0NzMxNSwiYXNzZXRfYWdlX2RheXMiOjU5NiwidmlfdXNlY2FzZV9pZCI6MTA4MjEsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=1a610a3670f146e1&_nc_vs=HBkcFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HTUJ0dWhzcGFfVkNOZ2NDQUlqQWN1Q0VpOFlWYnY0R0FBQUYVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmpt_ZqNju1gIVAigCQzMsF0A0AAAAAAAAGBlkYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwEQB1AmWKqQEA&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&_nc_zt=28&oh=00_Af-5tEJ5om1ssVvhzqOHVqc1dDkHVks6lJOQRqksyMrH3A&oe=6A392C36&bitrate=0&tag=dash_h264-basic-gen2_720p"></video><span class="tg">06 · CLICKY IRL</span><span class="lb">projected buttons on a bare wall</span></div>
+        <div class="meta"><h4>Clicky IRL</h4><p><span class="beat">Beat:</span> a plain wall responds to a real press.</p></div>
+      </div>
+      <div class="demo reveal">
+        <div class="film"><img src="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/434069040_708526774524906_7376808912820184909_n.png?_nc_cat=104&ccb=1-7&_nc_sid=f537c7&_nc_ohc=YMWHRzyzNGIQ7kNvwHFSwRz&_nc_oc=Adr9cxOYple-UiPNRQRm31G1_9WysvOsF60V9oGWj1HHLX_S1IwW3uFf96HCqavcN5yhkkpSnamw_1g6uppS_0NV&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&oh=00_Af9x7Sl3T3-GJMK4_sNCRedeyCaFCIrXWK8vesWz6us53A&oe=6A391A15" alt="Overhead flights demo"><span class="tg">03 · OVERHEAD</span><span class="lb">the ceiling traces the plane above</span></div>
+        <div class="meta"><h4>Overhead Flights</h4><p><span class="beat">Beat:</span> the ceiling becomes a window to the sky.</p></div>
+      </div>
+      <div class="demo reveal">
+        <div class="film"><img src="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/418313664_371450952509068_2177003005345975293_n.png?_nc_cat=101&ccb=1-7&_nc_sid=f537c7&_nc_ohc=NVSb4q-8rA4Q7kNvwEGjH1H&_nc_oc=AdpietRF60MBmVtFkY5FUHy-duL1nkZJ96WQatoIWHM7uXVgd8rmkIzEHK4jmTtDwi1sUSkWEavj5jWT7D_mhUOu&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&oh=00_Af-V_bCjogr9-T9JuoH5rbcSHDLLddskn7hb4kTT_lXDmA&oe=6A393696" alt="The knob reborn demo"><span class="tg">07 · THE KNOB</span><span class="lb">a dumb dial gains a glowing readout</span></div>
+        <div class="meta"><h4>The Knob Reborn</h4><p><span class="beat">Beat:</span> old hardware wakes up, unreplaced.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHERE ===== -->
+<section class="band cream" id="where">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker">─── 05 · where it works</span>
+      <h2 class="display">one device. every surface.</h2>
+    </div>
+    <div class="uses">
+      <div class="use reveal">
+        <div class="top"><div class="num">01</div>
+          <svg class="gl" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/><path d="M10 19v-5h4v5"/></svg>
+        </div>
+        <h4>The Home</h4><p>Weather by the door. A recipe on the counter. Chess on the table. A companion that walks the walls.</p>
+        <span class="surf">wall &middot; counter &middot; table</span>
+      </div>
+      <div class="use reveal">
+        <div class="top"><div class="num">02</div>
+          <svg class="gl" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg>
+        </div>
+        <h4>The Office</h4><p>Set it down, it maps the room. Agendas on the table, boards on the wall. No monitor, no dongles.</p>
+        <span class="surf">table &middot; wall &middot; desk</span>
+      </div>
+      <div class="use reveal">
+        <div class="top"><div class="num">03</div>
+          <svg class="gl" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>
+        </div>
+        <h4>The Factory</h4><p>Assembly steps projected onto the workpiece. Training that follows the hands, not a manual.</p>
+        <span class="surf">workpiece &middot; bench</span>
+      </div>
+      <div class="use reveal">
+        <div class="top"><div class="num">04</div>
+          <svg class="gl" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l9-3 9 3-9 3-9-3z"/><path d="M7 8v5c0 1 2 2 5 2s5-1 5-2V8"/><path d="M21 6v5"/></svg>
+        </div>
+        <h4>The Classroom</h4><p>The schematic on the panel they&rsquo;re about to open. Math on the table. The room teaches.</p>
+        <span class="surf">panel &middot; table &middot; board</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AMBIENT BY DEFAULT ===== -->
+<section class="band green" id="ambient">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker amber">─── 06 · ambient, not aggressive</span>
+      <h2 class="display" style="color:var(--cream);">part of the room, never imposed on it.</h2>
+    </div>
+    <div class="ambient">
+      <div class="acard reveal"><div class="k">design the absence</div><h4>quiet is the default.</h4><p>Content appears when it&rsquo;s needed and dissolves cleanly when it isn&rsquo;t — giving the surface back. The empty wall matters as much as the active one.</p></div>
+      <div class="acard reveal"><div class="k">shared, not personal</div><h4>everyone in the room sees it.</h4><p>It projects onto real surfaces, so a whole family or team shares one experience. No pairing, no headset, no per-user cost.</p></div>
+      <div class="acard reveal"><div class="k">it reads the room</div><h4>geometry, not faces.</h4><p>On-device scene understanding maps walls, doors and tables to place light — then lets go. The intelligence stays in your space.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHAT WE'VE BUILT ===== -->
+<section class="band cream" id="built">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker">─── 07 · what we&rsquo;ve built</span>
+      <h2 class="display">we&rsquo;ve already built the hard part.</h2>
+      <p style="max-width:50ch; font-size:18px; line-height:1.6; color:var(--mute); margin-top:22px;">This isn&rsquo;t a render. A working device sees a real room and projects onto it today &mdash; everything in the demo library above is real footage.</p>
+    </div>
+
+    <div class="built-grid">
+      <div class="bcard reveal"><span class="chk">✓</span><h4>A working device</h4><p>Sees a room in infrared + depth and projects perspective-corrected light onto any surface &mdash; running today, not simulated.</p></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>On-device spatial model</h4><p>Real-time scene understanding maps walls, doors and tables and updates the instant the room changes.</p></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>The full demo library, shot</h4><p>All eight signature scenarios captured as real footage on the prototype &mdash; the reels playing on this page.</p></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>Projection onto moving objects</h4><p>Our gold-medal tracking-and-projection system, now generalized to a whole room instead of a single target.</p></div>
+    </div>
+
+    <div class="pmf reveal">
+      <div class="pmf-k">why we think we&rsquo;re near product-market fit</div>
+      <p class="pmf-q">Every demo ends with the same sentence: <span class="q">&ldquo;when can I buy one?&rdquo;</span></p>
+      <div class="pmf-stats">
+        <div><b>[ &mdash; ]</b><span>on the early-access waitlist</span></div>
+        <div><b>[ &mdash; ]</b><span>pilot conversations underway</span></div>
+        <div><b>100%</b><span>of live demos ask &ldquo;what else can it do?&rdquo;</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NUMBERS ===== -->
+<section class="band deep">
+  <div class="wrap">
+    <span class="marker reveal" style="display:block; color:#7e7964;">─── 08 · the shape of it</span>
+    <div class="nums">
+      <div class="num reveal"><div class="big" style="color:var(--orange);">0</div><div class="small">things to wear</div></div>
+      <div class="num reveal"><div class="big" style="color:var(--orange-2);">1</div><div class="small">device per room</div></div>
+      <div class="num reveal"><div class="big" style="color:var(--cream);">8+</div><div class="small">screens it replaces</div></div>
+      <div class="num reveal"><div class="big" style="color:var(--orange);">&infin;</div><div class="small">surfaces it can use</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEAM / WHY NOW ===== -->
+<section class="band cream">
+  <div class="wrap">
+    <span class="marker reveal" style="display:block; margin-bottom:32px;">─── 09 · the team &amp; why now</span>
+    <div class="founder">
+      <div class="note reveal">
+        <p class="big">Built by the engineers who shipped the last generation of spatial computing &mdash; and left to build the next one.</p>
+        <p>PrismLabs is started by engineers from <b>Snap Spectacles</b> and <b>Meta&rsquo;s Reality Labs</b> smart-glasses programs, alongside <b>Apple engineers from the Vision Products Group</b> who helped ship Apple Vision Pro and worked inside its special-projects teams.</p>
+        <p>We spent years building the headset future &mdash; and watched people take the hardware off after thirty minutes, every time. So we stopped putting the display on the face and started putting it on the room.</p>
+        <div class="sig">&mdash; the PrismLabs team</div>
+      </div>
+      <div class="whycard reveal">
+        <h4>the people &amp; the window</h4>
+        <div class="whyrow"><span class="dot"></span><div><b>Apple Vision Products Group.</b> Helped ship Apple Vision Pro &mdash; the most ambitious spatial computing hardware ever made.</div></div>
+        <div class="whyrow"><span class="dot"></span><div><b>Snap Spectacles &amp; Meta Reality Labs.</b> Shipped consumer smart glasses at the companies that defined the category.</div></div>
+        <div class="whyrow"><span class="dot"></span><div><b>A gold-medal projection system</b> that tracked moving objects in real time &mdash; recognized by the U.S. Senate.</div></div>
+        <div class="whyrow"><span class="dot"></span><div><b>Scene understanding just crossed the line</b> &mdash; instant segmentation and on-device inference, only in the last twelve months. The window is open now.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLOSING ===== -->
+<section class="closing" id="access">
+  <div class="wrap">
+    <h2 class="display reveal">your home already has walls.<br/>we gave them <span class="o">a mind.</span></h2>
+    <p class="reveal" style="position:relative; font-size:18px; color:rgba(239,230,210,.6); margin:18px 0 0; max-width:40ch; margin-left:auto; margin-right:auto; line-height:1.6;">Join the early-access waitlist. We&rsquo;re doing a small number of live demos now.</p>
+    <form class="reveal" id="waitlist-form" style="position:relative; margin-top:28px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;" onsubmit="handleWaitlist(event)">
+      <input id="waitlist-email" type="email" placeholder="your@email.com" required
+        style="font-family:'Geist Mono',monospace; font-size:13px; letter-spacing:.06em; padding:13px 18px; border-radius:7px; border:1px solid var(--green-line); background:rgba(255,255,255,.06); color:var(--cream); outline:none; min-width:260px; backdrop-filter:blur(6px);"
+        onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--green-line)'">
+      <button type="submit" class="btn orange">Get early access →</button>
+    </form>
+    <div id="waitlist-thanks" style="display:none; position:relative; margin-top:24px; font-family:'Geist Mono',monospace; font-size:13px; letter-spacing:.1em; color:var(--orange-2);">✓ you&rsquo;re on the list. we&rsquo;ll be in touch.</div>
+    <div class="cta reveal" style="margin-top:20px;">
+      <a href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Investor%20Inquiry" class="btn ghost on-dark">For investors</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap footin">
+    <a class="lockup" href="#top">
+      <svg class="mark" width="28" height="28" style="color:var(--cream)"><use href="#jl-mark"/></svg>
+      <span class="word"><span class="j" style="font-size:17px;">Prism</span><span class="l" style="font-size:17px; color:var(--cream);">Labs</span></span>
+    </a>
+    <span class="meta">the ambient OS for physical space</span>
+    <span class="meta">PL · 002 / 2026 · pre-seed · open</span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  const io = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12, rootMargin:'0px 0px -7% 0px'});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(Math.min(i%3,2)*0.08)+'s'; io.observe(el); });
+
+  function handleWaitlist(e) {
+    e.preventDefault();
+    const email = document.getElementById('waitlist-email').value;
+    window.location.href = 'mailto:jonatechtv@gmail.com?subject=PrismLabs%20Early%20Access&body=Hi%2C%20I%27d%20like%20early%20access.%20My%20email%3A%20' + encodeURIComponent(email);
+    document.getElementById('waitlist-form').style.display = 'none';
+    document.getElementById('waitlist-thanks').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
