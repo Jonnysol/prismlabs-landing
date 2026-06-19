@@ -1,12 +1,22 @@
 [
   {
+    "id": "2a5a9e8",
+    "name": "v15 \u00b7 2a5a9e8",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "v15: lead with AR; reframe mechanism as 'projected reality'; highlight credentials",
+    "changes": "commit 2a5a9e8",
+    "url": "./",
+    "branch": "2a5a9e8"
+  },
+  {
     "id": "59562b5",
     "name": "v14 \u00b7 59562b5",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "v14: copy overhaul per spec \u2014 no deletions, each section earns its place",
     "changes": "commit 59562b5",
-    "url": "./",
+    "url": "versions/59562b5/index.html",
     "branch": "59562b5"
   },
   {
