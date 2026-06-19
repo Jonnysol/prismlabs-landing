@@ -46,12 +46,12 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
   /* type scale */
-  .eyebrow{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.26em; text-transform:uppercase; color:var(--mute); }
+  .eyebrow{ font-family:'Space Mono',monospace; font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute); }
   .eyebrow .b{ color:var(--beam); }
-  h1,h2,h3{ margin:0; font-weight:800; font-stretch:118%; letter-spacing:-.02em; line-height:1.0; }
-  .display{ font-size:clamp(40px,7.4vw,104px); }
-  .h2{ font-size:clamp(30px,4.6vw,62px); line-height:1.02; }
-  .lede{ font-size:clamp(17px,1.55vw,21px); line-height:1.55; color:#CFCBC0; font-weight:400; max-width:46ch; }
+  h1,h2,h3{ margin:0; font-weight:800; font-stretch:106%; letter-spacing:-.025em; line-height:1.02; text-wrap:balance; }
+  .display{ font-size:clamp(38px,5.4vw,78px); line-height:.99; }
+  .h2{ font-size:clamp(26px,3.4vw,46px); line-height:1.06; }
+  .lede{ font-size:clamp(16.5px,1.3vw,19px); line-height:1.62; color:#D3CFC5; font-weight:400; max-width:50ch; text-wrap:pretty; }
   .small{ font-size:14px; line-height:1.6; color:var(--mute); }
 
   /* buttons */
@@ -90,9 +90,9 @@
   .hero-bg::after{ content:""; position:absolute; inset:0;
     background:linear-gradient(180deg, rgba(14,13,11,.55) 0%, rgba(14,13,11,.2) 40%, rgba(14,13,11,.82) 86%, var(--room) 100%); }
   .hero-in{ position:relative; z-index:3; width:100%; max-width:var(--maxw); margin:0 auto; padding:0 32px 70px; }
-  .hero h1{ margin:20px 0 0; max-width:16ch; }
+  .hero h1{ margin:18px 0 0; max-width:17ch; }
   .hero h1 em{ font-style:normal; color:var(--beam); }
-  .hero .lede{ margin:26px 0 0; }
+  .hero .lede{ margin:24px 0 0; }
   .hero .cta{ margin-top:34px; display:flex; gap:12px; flex-wrap:wrap; }
   .hero .telem{ position:absolute; top:104px; left:32px; z-index:3; color:var(--paper); opacity:.82;
     font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.14em; display:flex; align-items:center; gap:9px; }
@@ -131,6 +131,23 @@
   .pcard .meta{ padding:18px 18px 22px; }
   .pcard .meta h3{ font-size:18px; font-stretch:112%; letter-spacing:-.01em; }
   .pcard .meta p{ margin:8px 0 0; font-size:13.5px; line-height:1.5; color:var(--mute); }
+
+  /* SEES THE ROOM — perception band */
+  .sees{ position:relative; min-height:94vh; display:flex; align-items:center; overflow:hidden;
+    border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
+  .sees-bg{ position:absolute; inset:0; z-index:0; }
+  .sees-bg video{ width:100%; height:100%; object-fit:cover; opacity:.6; }
+  .sees-bg::after{ content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, rgba(14,13,11,.92) 0%, rgba(14,13,11,.6) 42%, rgba(14,13,11,.25) 100%),
+               linear-gradient(0deg, rgba(14,13,11,.7), transparent 40%); }
+  .sees-in{ position:relative; z-index:2; }
+  .sees-in h2{ margin:18px 0 0; max-width:18ch; }
+  .sees-in h2 em{ font-style:normal; color:var(--scan); }
+  .sees-in .lede{ margin:22px 0 0; }
+  .sees-in .chips{ margin-top:26px; display:flex; gap:10px; flex-wrap:wrap; }
+  .chip{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--paper); border:1px solid var(--line); border-radius:2px; padding:7px 12px; background:rgba(20,18,14,.5); backdrop-filter:blur(4px); }
+  .chip .d{ color:var(--scan); }
 
   /* split: why */
   .split{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
@@ -253,6 +270,35 @@
         <div class="film"><video autoplay muted loop playsinline preload="metadata" poster="assets/overhead.jpg"><source src="assets/overhead.mp4" type="video/mp4"></video><span class="tag mono">The system</span></div>
         <div class="meta"><h3>One camera, the whole room</h3><p>A single overhead view tracks the surface live and keeps every projection registered as things move.</p></div>
       </div>
+      <div class="pcard reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" poster="assets/track-person.jpg"><source src="assets/track-person.mp4" type="video/mp4"></video><span class="tag mono">Body tracking</span></div>
+        <div class="meta"><h3>It tracks people, too</h3><p>A live skeleton maps onto a person — pose, motion and presence, projected in real time.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" poster="assets/object.jpg"><source src="assets/object.mp4" type="video/mp4"></video><span class="tag mono">Recognition</span></div>
+        <div class="meta"><h3>It knows what it's looking at</h3><p>Objects are recognised and their real dimensions labelled in light, right where they sit.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video autoplay muted loop playsinline preload="metadata" poster="assets/measure-table.jpg"><source src="assets/measure-table.mp4" type="video/mp4"></video><span class="tag mono">Measurement</span></div>
+        <div class="meta"><h3>It sizes the real world</h3><p>Every object on the surface measured and annotated live — no tape, no app, no markers.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IT SEES THE ROOM -->
+<section class="sees" id="sees" aria-label="It understands the room in 3D">
+  <div class="sees-bg">
+    <video autoplay muted loop playsinline preload="metadata" poster="assets/room-scan.jpg" aria-hidden="true"><source src="assets/room-scan.mp4" type="video/mp4"></video>
+  </div>
+  <div class="wrap sees-in">
+    <span class="eyebrow"><span class="b">PERCEPTION</span> — IT SEES THE ROOM</span>
+    <h2 class="h2">It doesn't just project light.<br/>It <em>understands the space.</em></h2>
+    <p class="lede">Before a single pixel lands, the device reads the room in three dimensions — walls, surfaces, objects, people — and places everything with intent. Point it at any room; it figures the rest out.</p>
+    <div class="chips">
+      <span class="chip"><span class="d">▸</span> 3D scene map</span>
+      <span class="chip"><span class="d">▸</span> object detection</span>
+      <span class="chip"><span class="d">▸</span> any room, understood</span>
     </div>
   </div>
 </section>
