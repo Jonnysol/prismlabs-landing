@@ -1,12 +1,22 @@
 [
   {
+    "id": "9dbedd2",
+    "name": "v11 \u00b7 9dbedd2",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "v11: PrismOS prism + spectrum rebrand",
+    "changes": "commit 9dbedd2",
+    "url": "./",
+    "branch": "9dbedd2"
+  },
+  {
     "id": "d8d758d",
     "name": "v10 \u00b7 d8d758d",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "closing: flipbook word cycles surfaces (walls/tables/shelves/...)",
     "changes": "commit d8d758d",
-    "url": "./",
+    "url": "versions/d8d758d/index.html",
     "branch": "d8d758d"
   },
   {
