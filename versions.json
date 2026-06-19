@@ -1,32 +1,92 @@
 [
   {
-    "id": "deck",
-    "name": "v3 — Deck (dark · Satoshi)",
+    "id": "3ac890f",
+    "name": "v9 \u00b7 3ac890f",
     "status": "LIVE",
     "date": "2026-06-19",
-    "vibe": "Dark viewfinder. Real footage, Satoshi, deck-tight. Video-first.",
-    "changes": "Full redesign off the cream look. Real prototype footage, ambient home demos, 3D scene renders, the OS-line hero, and the live Studio editor.",
+    "vibe": "level-four: ambient home demos + scene renders + version-control system",
+    "changes": "commit 3ac890f",
     "url": "./",
-    "branch": "main / level-four"
+    "branch": "3ac890f"
   },
   {
-    "id": "investor",
-    "name": "v2 — Investor (verbose)",
-    "status": "archived",
-    "date": "2026-06-18",
-    "vibe": "Cream + serif, expanded into a full pitch: market, why-now, moat, the ask.",
-    "changes": "Added five investor sections, real team, reworked demos. Thorough but long and template-ish.",
-    "url": "versions/investor/index.html",
-    "branch": "commit d9a7019"
+    "id": "7deebed",
+    "name": "v8 \u00b7 7deebed",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "hero leads with the OS line; Satoshi default; closing line; studio gets Fontshare",
+    "changes": "commit 7deebed",
+    "url": "versions/7deebed/index.html",
+    "branch": "7deebed"
   },
   {
-    "id": "original",
-    "name": "v1 — Original (cream · CDN)",
-    "status": "archived",
+    "id": "1efa3c3",
+    "name": "v7 \u00b7 1efa3c3",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "studio tool + video playback fix + leaner copy",
+    "changes": "commit 1efa3c3",
+    "url": "versions/1efa3c3/index.html",
+    "branch": "1efa3c3"
+  },
+  {
+    "id": "cdace31",
+    "name": "v6 \u00b7 cdace31",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "copy pass: apply directives, de-corned (no em dashes, no slop patterns)",
+    "changes": "commit cdace31",
+    "url": "versions/cdace31/index.html",
+    "branch": "cdace31"
+  },
+  {
+    "id": "e3a9cdf",
+    "name": "v5 \u00b7 e3a9cdf",
+    "status": "commit",
     "date": "2026-06-18",
-    "vibe": "The first concept. Warm cream, Instrument Serif, terracotta accent. Elegant, but the AI-default look.",
-    "changes": "First build from the v5 HTML: fixed the broken email links, added a waitlist form. Uses the original CDN videos.",
-    "url": "versions/original/index.html",
-    "branch": "stable"
+    "vibe": "level-three: rebalance type, +3 real proof videos, + 'it sees the room' perception band",
+    "changes": "commit e3a9cdf",
+    "url": "versions/e3a9cdf/index.html",
+    "branch": "e3a9cdf"
+  },
+  {
+    "id": "5b73702",
+    "name": "v4 \u00b7 5b73702",
+    "status": "commit",
+    "date": "2026-06-18",
+    "vibe": "a11y + polish: fix #why anchor, skip link, scroll-margin, color-scheme, safe-area, tap/touch",
+    "changes": "commit 5b73702",
+    "url": "versions/5b73702/index.html",
+    "branch": "5b73702"
+  },
+  {
+    "id": "96c8c4f",
+    "name": "v3 \u00b7 96c8c4f",
+    "status": "commit",
+    "date": "2026-06-18",
+    "vibe": "Redesign as a deck: dark \"viewfinder\" identity, real footage, deck-tight copy",
+    "changes": "commit 96c8c4f",
+    "url": "versions/96c8c4f/index.html",
+    "branch": "96c8c4f"
+  },
+  {
+    "id": "d9a7019",
+    "name": "v2 \u00b7 d9a7019",
+    "status": "commit",
+    "date": "2026-06-18",
+    "vibe": "Make landing page investor-ready: team rewrite, demo edits, 5 new sections + polish",
+    "changes": "commit d9a7019",
+    "url": "versions/d9a7019/index.html",
+    "branch": "d9a7019"
+  },
+  {
+    "id": "b32b10e",
+    "name": "v1 \u00b7 b32b10e",
+    "status": "commit",
+    "date": "2026-06-18",
+    "vibe": "Add PrismLabs landing page v5 with waitlist form and email fixes",
+    "changes": "commit b32b10e",
+    "url": "versions/b32b10e/index.html",
+    "branch": "b32b10e"
   }
 ]
