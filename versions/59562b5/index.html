@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PrismOS · the ambient OS for physical space · PrismLabs</title>
+<meta name="description" content="PrismOS is the ambient operating layer from PrismLabs. One device sees a room in 3D and turns any surface into a live display, then disappears. Ambient interfaces for spatial intelligence.">
+<meta name="theme-color" content="#08070A">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PrismOS · the ambient OS for physical space">
+<meta property="og:description" content="Ambient interfaces for spatial intelligence. The ambient operating layer from PrismLabs. Context at every surface.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%2308070A'/%3E%3Cpath d='M32 14 L51 47 L13 47 Z' fill='none' stroke='%23E9E7E0' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cpath d='M32 14 L32 47' stroke='%23EC6F9E' stroke-width='1.4'/%3E%3Cpath d='M32 14 L13 47' stroke='%23F2A65A' stroke-width='1.4'/%3E%3Cpath d='M32 14 L51 47' stroke='%234AA3F0' stroke-width='1.4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..900&family=Inter:wght@300..800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --room:#08070A; --room-2:#100E14; --room-3:#181520;
+    --paper:#ECEAF2; --ink:#131210; --mute:#8E8AA0; --mute-2:#615D74;
+    --line:rgba(236,234,242,.13); --line-2:rgba(236,234,242,.06);
+    --accent:#9DA3FF;
+    /* ambient spectrum */
+    --c1:#F2A65A; --c2:#F0876B; --c3:#EC6F9E; --c4:#B36BE0; --c5:#6E74E8; --c6:#4AA3F0; --c7:#5BD0D8;
+    --spectrum:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c5),var(--c6),var(--c7));
+    --spectrum-soft:linear-gradient(90deg,rgba(242,166,90,.9),rgba(236,111,158,.9),rgba(179,107,224,.9),rgba(74,163,240,.9),rgba(91,208,216,.9));
+    --maxw:1240px;
+    /* studio-controllable */
+    --font-display:'Geist'; --font-body:'Inter'; --font-mono:'Space Mono';
+    --hero-scale:1; --head-scale:1; --body-scale:1;
+    --disp-stretch:100%; --disp-weight:600; --disp-tracking:-.02em;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; color-scheme:dark; }
+  body{ margin:0; background:var(--room); color:var(--paper);
+    font-family:var(--font-body),system-ui,sans-serif; font-weight:400; font-stretch:100%;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden; }
+  ::selection{ background:var(--accent); color:#0b0a08; }
+  a{ color:inherit; text-decoration:none; -webkit-tap-highlight-color:rgba(157,163,255,.22); }
+  button,a,.btn{ touch-action:manipulation; }
+  section[id],header[id]{ scroll-margin-top:88px; }
+  .skip{ position:absolute; left:-9999px; top:0; z-index:100; }
+  .skip:focus{ left:16px; top:16px; padding:10px 16px; background:var(--accent); color:#100c06;
+    font-family:var(--font-mono),monospace; font-size:12px; border-radius:3px; }
+  @supports(padding:max(0px)){ .navin,.hero-in{ padding-left:max(32px,env(safe-area-inset-left)); padding-right:max(32px,env(safe-area-inset-right)); } }
+  img,video{ display:block; max-width:100%; }
+  .mono{ font-family:var(--font-mono),ui-monospace,monospace; }
+  .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 32px; }
+
+  /* grain + vignette: the dim room */
+  body::before{ content:""; position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(120% 80% at 50% 0%, transparent 55%, rgba(0,0,0,.55) 100%);
+    mix-blend-mode:multiply; }
+  body::after{ content:""; position:fixed; inset:0; z-index:2; pointer-events:none; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* type scale */
+  .eyebrow{ font-family:var(--font-mono),monospace; font-size:12.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--mute); }
+  .eyebrow .b{ color:var(--accent); }
+  h1,h2,h3{ margin:0; font-family:var(--font-display); font-weight:var(--disp-weight); font-stretch:var(--disp-stretch); letter-spacing:var(--disp-tracking); line-height:1.02; text-wrap:balance; }
+  .display{ font-size:calc(clamp(38px,5.4vw,78px) * var(--hero-scale)); line-height:.99; }
+  .h2{ font-size:calc(clamp(26px,3.4vw,46px) * var(--head-scale)); line-height:1.06; }
+  .lede{ font-size:calc(clamp(16.5px,1.3vw,19px) * var(--body-scale)); line-height:1.62; color:#D3CFC5; font-weight:400; max-width:50ch; text-wrap:pretty; }
+  .small{ font-size:14px; line-height:1.6; color:var(--mute); }
+
+  /* buttons */
+  .btn{ display:inline-flex; align-items:center; gap:10px; font-family:var(--font-mono),monospace; font-size:12.5px;
+    letter-spacing:.08em; text-transform:uppercase; padding:14px 22px; border-radius:2px; cursor:pointer;
+    border:1px solid var(--line); color:var(--paper); background:transparent; transition:border-color .2s, color .2s, background .2s, transform .2s; }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn.solid{ background:var(--paper); border-color:var(--paper); color:#0b0a0e; font-weight:600; }
+  .btn.solid:hover{ background:#fff; box-shadow:0 10px 34px -14px rgba(157,163,255,.45); }
+  .btn:not(.solid):hover{ border-color:var(--accent); color:var(--accent); }
+  a:focus-visible,.btn:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  /* nav */
+  nav{ position:fixed; top:0; left:0; right:0; z-index:40; display:flex; justify-content:center;
+    transition:background .4s, border-color .4s, backdrop-filter .4s; border-bottom:1px solid transparent; }
+  nav.scrolled{ background:rgba(8,7,10,.74); backdrop-filter:blur(12px) saturate(1.2); border-bottom:1px solid var(--line-2); }
+  .navin{ width:100%; max-width:var(--maxw); padding:18px 32px; display:flex; align-items:center; justify-content:space-between; }
+  .mark{ display:flex; align-items:center; gap:13px; }
+  .tagmark{ width:27px; height:27px; flex:none; }
+  .word{ font-family:var(--font-display); font-weight:500; letter-spacing:.22em; font-size:16px; color:var(--paper); padding-left:2px; }
+  .word .div{ color:var(--mute-2); margin:0 10px; font-weight:300; letter-spacing:0; }
+  .word .os{ letter-spacing:.01em; text-transform:none; color:var(--accent); }
+  @media(max-width:600px){ .word .div, .word .os{ display:none; } }
+  .navright{ display:flex; align-items:center; gap:22px; }
+  .navlink{ font-family:var(--font-mono),monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--mute); transition:color .2s; }
+  .navlink:hover{ color:var(--accent); }
+  @media(max-width:680px){ .navlink.hide-sm{ display:none; } }
+
+  /* section rhythm */
+  section{ position:relative; z-index:5; }
+  .band{ padding:130px 0; }
+  @media(max-width:740px){ .band{ padding:88px 0; } }
+
+  /* HERO */
+  .hero{ position:relative; min-height:100svh; display:flex; align-items:flex-end; overflow:hidden; z-index:5; }
+  .hero-bg{ position:absolute; inset:0; z-index:0; }
+  .hero-bg video{ width:100%; height:100%; object-fit:cover; opacity:.5; }
+  .hero-bg::after{ content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(8,7,10,.5) 0%, rgba(8,7,10,.18) 40%, rgba(8,7,10,.82) 84%, var(--room) 100%); }
+  .hero::after{ content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(135% 100% at 0% 100%, rgba(8,7,10,.85), transparent 58%); }
+  .hero-in{ position:relative; z-index:3; width:100%; max-width:var(--maxw); margin:0 auto; padding:0 32px 78px; }
+  .hero h1{ margin:18px 0 0; max-width:17ch; }
+  .hero h1 em{ font-style:normal; color:var(--accent); }
+  .hero .lede{ margin:24px 0 0; }
+  .hero .cta{ margin-top:36px; display:flex; gap:12px; flex-wrap:wrap; }
+  .hero-hud{ position:absolute; top:0; left:0; right:0; z-index:3; padding-top:106px; pointer-events:none; }
+  .telem{ display:inline-flex; align-items:center; gap:10px; font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:rgba(236,234,242,.5); }
+  .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px 1px rgba(157,163,255,.85); animation:blink 2.6s infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  /* statement section */
+  .stmt .eyebrow{ display:block; }
+  .stmt h2{ margin:22px 0 0; max-width:20ch; }
+  .stmt h2 em{ font-style:normal; color:var(--accent); }
+  .stmt .lede{ margin:28px 0 0; }
+
+  /* full-bleed parallax media band */
+  .reel{ position:relative; height:86vh; min-height:520px; overflow:hidden; z-index:5;
+    border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
+  .reel .px{ position:absolute; left:0; right:0; top:-14%; height:128%; will-change:transform; }
+  .reel .px video,.reel .px img{ width:100%; height:100%; object-fit:cover; }
+  .reel::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,9,7,.5), rgba(10,9,7,.1) 30%, rgba(10,9,7,.65)); }
+  .reel .cap{ position:absolute; left:0; bottom:0; z-index:3; padding:36px 32px; width:100%; }
+  .reel .cap .k{ font-family:var(--font-mono),monospace; font-size:11.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
+  .reel .cap .t{ margin-top:10px; font-weight:800; font-stretch:115%; letter-spacing:-.02em; font-size:clamp(22px,2.7vw,36px); max-width:24ch; line-height:1.05; }
+
+  /* proof grid */
+  .proof{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:54px; }
+  @media(max-width:860px){ .proof{ grid-template-columns:1fr; max-width:460px; } }
+  .pcard{ border:1px solid var(--line); border-radius:3px; overflow:hidden; background:var(--room-2); }
+  .pcard .film{ position:relative; aspect-ratio:9/12; overflow:hidden; background:#000; }
+  .pcard .film video,.pcard .film img{ width:100%; height:100%; object-fit:cover; }
+  .pcard .film .tag{ position:absolute; top:12px; left:12px; font-family:var(--font-mono),monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:rgba(233,231,224,.85); background:rgba(10,9,7,.5); backdrop-filter:blur(4px); padding:4px 8px; border-radius:2px; }
+  .pcard .meta{ padding:18px 18px 22px; }
+  .pcard .meta h3{ font-size:18px; font-stretch:112%; letter-spacing:-.01em; }
+  .pcard .meta p{ margin:8px 0 0; font-size:13.5px; line-height:1.5; color:var(--mute); }
+
+  /* SEES THE ROOM - perception band */
+  .sees{ position:relative; min-height:94vh; display:flex; align-items:center; overflow:hidden;
+    border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
+  .sees-bg{ position:absolute; inset:0; z-index:0; }
+  .sees-bg video{ width:100%; height:100%; object-fit:cover; opacity:.6; }
+  .sees-bg::after{ content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, rgba(14,13,11,.92) 0%, rgba(14,13,11,.6) 42%, rgba(14,13,11,.25) 100%),
+               linear-gradient(0deg, rgba(14,13,11,.7), transparent 40%); }
+  .sees-in{ position:relative; z-index:2; }
+  .sees-in h2{ margin:18px 0 0; max-width:18ch; }
+  .sees-in h2 em{ font-style:normal; color:var(--accent); }
+  .sees-in .lede{ margin:22px 0 0; }
+  .sees-in .chips{ margin-top:26px; display:flex; gap:10px; flex-wrap:wrap; }
+  .chip{ font-family:var(--font-mono),monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--paper); border:1px solid var(--line); border-radius:2px; padding:7px 12px; background:rgba(20,18,14,.5); backdrop-filter:blur(4px); }
+  .chip .d{ color:var(--accent); }
+
+  /* split: why */
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+  @media(max-width:860px){ .split{ grid-template-columns:1fr; gap:36px; } }
+  .why h2{ max-width:14ch; }
+  .why h2 em{ font-style:normal; color:var(--accent); }
+  .why .lede{ margin-top:24px; }
+  .whyfilm{ position:relative; border:1px solid var(--line); border-radius:3px; overflow:hidden; aspect-ratio:4/5; max-height:560px; }
+  .whyfilm video,.whyfilm img{ width:100%; height:100%; object-fit:cover; }
+  .whyfilm .cap{ position:absolute; left:0; bottom:0; padding:18px; font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.14em; color:rgba(233,231,224,.85); background:linear-gradient(0deg,rgba(10,9,7,.7),transparent); width:100%; }
+
+  /* team + ask */
+  .ask{ border:1px solid var(--line); border-radius:4px; padding:48px 44px; background:linear-gradient(180deg,var(--room-2),var(--room)); }
+  @media(max-width:740px){ .ask{ padding:34px 26px; } }
+  .ask h2{ max-width:18ch; }
+  .ask .team{ margin-top:22px; font-size:16px; line-height:1.65; color:#C9C5BA; max-width:62ch; }
+  .ask .team b{ color:var(--paper); font-weight:700; }
+  .ask .cta{ margin-top:34px; display:flex; gap:12px; flex-wrap:wrap; }
+  .ask .stat{ margin-top:36px; display:flex; gap:38px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:26px; }
+  .ask .stat div{ }
+  .ask .stat b{ display:block; font-weight:800; font-stretch:118%; font-size:30px; color:var(--accent); line-height:1; }
+  .ask .stat span{ display:block; margin-top:8px; font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); }
+
+  /* footer */
+  .closeband{ padding:130px 0; text-align:center; position:relative; z-index:5; border-top:1px solid var(--line-2); }
+  .closeband h2{ max-width:26ch; margin:0 auto; }
+  .closeband em{ font-style:normal; color:var(--accent); }
+  .closeband .flip{ display:inline-block; color:var(--accent); transform-origin:50% 50%; backface-visibility:hidden; will-change:transform,opacity; }
+  @media(max-width:740px){ .closeband{ padding:90px 0; } }
+  footer{ position:relative; z-index:5; border-top:1px solid var(--line-2); padding:40px 0 54px; }
+  .footin{ display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; }
+  .footin .mono{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute-2); }
+
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  @media(prefers-reduced-motion:reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .dot{ animation:none; } html{ scroll-behavior:auto; }
+    .reel .px{ top:0; height:100%; }
+  }
+
+  /* ===== v11 spectrum system ===== */
+  @media(max-width:860px){ .hero .telem{ display:none; } }
+  .specrule{ height:1px; border:0; background:var(--line); width:100%; max-width:var(--maxw); margin:0 auto; }
+  .props{ padding:62px 0; border-top:1px solid var(--line-2); }
+  .propgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+  .prop{ padding:4px 38px; border-left:1px solid var(--line-2); }
+  .prop:first-child{ border-left:0; padding-left:0; }
+  .dotic{ width:34px; height:34px; display:block; margin-bottom:20px; color:var(--accent); }
+  .prop h3{ font-family:var(--font-display); font-size:19px; font-weight:500; letter-spacing:-.01em; line-height:1.32; color:var(--paper); max-width:19ch; margin:0; }
+  .prop h3 em{ font-style:normal; color:var(--accent); }
+  @media(max-width:760px){ .propgrid{ grid-template-columns:1fr; gap:30px; } .prop{ border-left:0; padding:0; } }
+  .closeband .flip{ color:var(--accent); }
+</style>
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- reusable prism + spectrum defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="spec" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F2A65A"/><stop offset=".18" stop-color="#F0876B"/><stop offset=".38" stop-color="#EC6F9E"/><stop offset=".56" stop-color="#B36BE0"/><stop offset=".74" stop-color="#6E74E8"/><stop offset=".88" stop-color="#4AA3F0"/><stop offset="1" stop-color="#5BD0D8"/>
+  </linearGradient>
+  <linearGradient id="specH" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#F2A65A"/><stop offset=".2" stop-color="#F0876B"/><stop offset=".4" stop-color="#EC6F9E"/><stop offset=".58" stop-color="#B36BE0"/><stop offset=".74" stop-color="#6E74E8"/><stop offset=".88" stop-color="#4AA3F0"/><stop offset="1" stop-color="#5BD0D8"/>
+  </linearGradient>
+  <symbol id="prism" viewBox="0 0 100 100">
+    <g fill="none" stroke="url(#spec)" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M50 9 L91 71 L9 71 Z" stroke-width="3"/>
+      <path d="M50 9 L50 71" stroke-width="2" opacity=".5"/>
+      <path d="M9 71 L50 53 L91 71" stroke-width="2" opacity=".5"/>
+      <path d="M50 9 L50 53" stroke-width="1.6" opacity=".28"/>
+    </g>
+  </symbol>
+</defs></svg>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="navin">
+    <a class="mark" href="#top" aria-label="PrismLabs home">
+      <svg class="tagmark" viewBox="0 0 100 100" aria-hidden="true"><use href="#prism"/></svg>
+      <span class="word">PRISMLABS<span class="div">/</span><span class="os">PrismOS</span></span>
+    </a>
+    <div class="navright">
+      <a class="navlink hide-sm" href="#built">The proof</a>
+      <a class="navlink hide-sm" href="#why">Why now</a>
+      <a class="navlink" href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Investor%20Inquiry">For investors ↗</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="hero">
+  <div class="hero-bg">
+    <video autoplay muted loop playsinline preload="auto" poster="../../assets/hero-tutoring.jpg">
+      <source src="../../assets/hero-tutoring.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-hud"><div class="wrap"><span class="telem"><span class="dot"></span> DEPTH · SURFACE LOCKED · PROJECTING</span></div></div>
+  <div class="hero-in">
+    <span class="eyebrow">No headset · no glasses · no phone · no screen</span>
+    <h1 class="display">The ambient OS for <em>physical space.</em></h1>
+    <p class="lede">A ceiling projector and depth camera, reading the room and painting the interface onto any surface in front of it: a wall, a table, a page. AR made of light, not lenses. No headset, no glasses, no phone, no screen.</p>
+    <div class="cta">
+      <a class="btn solid" href="#built">See it working ↓</a>
+      <a class="btn" href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Investor%20Inquiry">For investors</a>
+    </div>
+  </div>
+</header>
+
+<!-- VALUE PROPS (dot-matrix icons) -->
+<section class="props">
+  <div class="wrap propgrid">
+    <div class="prop reveal">
+      <svg class="dotic" viewBox="0 0 40 40" aria-hidden="true"><g fill="currentColor">
+        <circle cx="20" cy="20" r="2.3"/>
+        <circle cx="20" cy="9" r="1.5"/><circle cx="20" cy="31" r="1.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="31" cy="20" r="1.5"/>
+        <circle cx="12.4" cy="12.4" r="1.4"/><circle cx="27.6" cy="12.4" r="1.4"/><circle cx="12.4" cy="27.6" r="1.4"/><circle cx="27.6" cy="27.6" r="1.4"/>
+        <circle cx="20" cy="3.6" r="1"/><circle cx="20" cy="36.4" r="1"/><circle cx="3.6" cy="20" r="1"/><circle cx="36.4" cy="20" r="1"/>
+      </g></svg>
+      <h3>Ambient interfaces for <em>spatial intelligence.</em></h3>
+    </div>
+    <div class="prop reveal">
+      <svg class="dotic" viewBox="0 0 40 40" aria-hidden="true"><g fill="currentColor">
+        <circle cx="33" cy="20" r="1.5"/><circle cx="31.3" cy="26.5" r="1.5"/><circle cx="26.5" cy="31.3" r="1.5"/><circle cx="20" cy="33" r="1.5"/><circle cx="13.5" cy="31.3" r="1.5"/><circle cx="8.7" cy="26.5" r="1.5"/><circle cx="7" cy="20" r="1.5"/><circle cx="8.7" cy="13.5" r="1.5"/><circle cx="13.5" cy="8.7" r="1.5"/><circle cx="20" cy="7" r="1.5"/><circle cx="26.5" cy="8.7" r="1.5"/><circle cx="31.3" cy="13.5" r="1.5"/>
+      </g></svg>
+      <h3>The ambient operating layer.</h3>
+    </div>
+    <div class="prop reveal">
+      <svg class="dotic" viewBox="0 0 40 40" aria-hidden="true"><g fill="currentColor">
+        <circle cx="9" cy="10" r="1.6"/><circle cx="20" cy="10" r="1.6"/><circle cx="31" cy="10" r="1.6"/>
+        <circle cx="9" cy="20" r="1.6"/><circle cx="20" cy="20" r="1.6"/><circle cx="31" cy="20" r="1.6"/>
+        <circle cx="9" cy="30" r="1.6"/><circle cx="20" cy="30" r="1.6"/><circle cx="31" cy="30" r="1.6"/>
+      </g></svg>
+      <h3>Context at <em>every surface.</em></h3>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IT IS -->
+<section class="band stmt" id="main">
+  <div class="wrap">
+    <span class="eyebrow reveal">How it works</span>
+    <h2 class="h2 reveal" style="margin-top:18px; max-width:20ch;">A ceiling projector that paints AR onto the world.</h2>
+    <p class="lede reveal">A depth camera reads the room and tracks what's in it. A short-throw projector aims at any surface and paints the interface straight onto it. Nothing to wear, because the AR is light on the wall, not pixels on a lens. And everyone present sees it at once, with no second headset and no per-user cost.</p>
+  </div>
+</section>
+
+<!-- REEL: measurement on real objects -->
+<section class="reel" aria-label="Projected measurements on real objects">
+  <div class="px" data-parallax="0.18">
+    <video muted loop playsinline preload="metadata" poster="../../assets/measure.jpg">
+      <source src="../../assets/measure.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="cap">
+    <div class="wrap" style="padding:0 32px;">
+      <div class="k">Real footage · not a render</div>
+      <div class="t">Shot on the working prototype. Projected guidance locks to the surface, not the screen.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE BUILT (proof) -->
+<section class="band" id="built">
+  <div class="wrap">
+    <span class="eyebrow reveal">Built and working</span>
+    <h2 class="h2 reveal" style="margin-top:18px; max-width:20ch;">This runs on our prototype. Everything below is real.</h2>
+    <div class="proof">
+      <div class="pcard reveal">
+        <div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/hero-tutoring.jpg"><source src="../../assets/hero-tutoring.mp4" type="video/mp4"></video><span class="tag mono">Tutoring</span></div>
+        <div class="meta"><h3>The page becomes a tutor</h3><p>Math instruction projected onto paper. The lesson follows the page as it moves.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/measure.jpg"><source src="../../assets/measure.mp4" type="video/mp4"></video><span class="tag mono">Perception</span></div>
+        <div class="meta"><h3>Measured in light</h3><p>The camera reads an object's dimensions and projects them right onto it.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/overhead.jpg"><source src="../../assets/overhead.mp4" type="video/mp4"></video><span class="tag mono">The system</span></div>
+        <div class="meta"><h3>One camera, the whole room</h3><p>A single overhead sensor covers the whole space. No markers, no calibration, no extra hardware.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/track-person.jpg"><source src="../../assets/track-person.mp4" type="video/mp4"></video><span class="tag mono">Body tracking</span></div>
+        <div class="meta"><h3>Tracks the person</h3><p>Pose, motion and presence, from one overhead camera, drawn back in projected light.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/object.jpg"><source src="../../assets/object.mp4" type="video/mp4"></video><span class="tag mono">Recognition</span></div>
+        <div class="meta"><h3>Place a book, know the book</h3><p>The camera identifies an object the moment it appears and projects its context right beside it.</p></div>
+      </div>
+      <div class="pcard reveal">
+        <div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/room-scan.jpg"><source src="../../assets/room-scan.mp4" type="video/mp4"></video><span class="tag mono">Scene</span></div>
+        <div class="meta"><h3>Reads the room in 3D</h3><p>Every wall, surface and object, mapped in real time. The space is understood before anything projects.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IT SEES THE ROOM -->
+<section class="sees" id="sees" aria-label="It understands the room in 3D">
+  <div class="sees-bg">
+    <video muted loop playsinline preload="metadata" poster="../../assets/room-scan.jpg" aria-hidden="true"><source src="../../assets/room-scan.mp4" type="video/mp4"></video>
+  </div>
+  <div class="wrap sees-in">
+    <span class="eyebrow">The room reacts</span>
+    <h2 class="h2">The room sees what's happening, and <em>answers in light.</em></h2>
+    <p class="lede">Set a book on the desk and its details appear beside it. Walk into the kitchen and your recipe is already on the counter. Ask where your keys are and the spot lights up. The projector tracks every object and surface, reasons about what you're doing, and responds, wherever you move.</p>
+    <div class="chips">
+      <span class="chip"><span class="d">▸</span> Knows what's in the room</span>
+      <span class="chip"><span class="d">▸</span> Remembers where things are</span>
+      <span class="chip"><span class="d">▸</span> Follows you, room to room</span>
+    </div>
+  </div>
+</section>
+
+<!-- AMBIENT AT HOME -->
+<section class="band" id="ambient">
+  <div class="wrap">
+    <span class="eyebrow reveal">In a real room</span>
+    <h2 class="h2 reveal" style="margin-top:18px; max-width:20ch;">At home, it just becomes part of the room.</h2>
+    <div class="proof">
+      <div class="pcard reveal"><div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/ambient-bird.jpg"><source src="../../assets/ambient-bird.mp4" type="video/mp4"></video><span class="tag mono">Living room</span></div><div class="meta"><h3>Art on any wall</h3><p>A blank wall becomes a framed piece, lit only where the image is.</p></div></div>
+      <div class="pcard reveal"><div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/ambient-art.jpg"><source src="../../assets/ambient-art.mp4" type="video/mp4"></video><span class="tag mono">Ambient</span></div><div class="meta"><h3>Quiet by default</h3><p>Sits in the room like a framed print, not a glowing screen.</p></div></div>
+      <div class="pcard reveal"><div class="film"><video muted loop playsinline preload="metadata" poster="../../assets/ambient-display.jpg"><source src="../../assets/ambient-display.mp4" type="video/mp4"></video><span class="tag mono">Reach in</span></div><div class="meta"><h3>Touch the light</h3><p>Controls appear on the surface and answer a real hand.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROOMS — the spatial model (CDN scene renders) -->
+<section class="band" id="rooms">
+  <div class="wrap">
+    <span class="eyebrow reveal">The same model, any room</span>
+    <h2 class="h2 reveal" style="margin-top:18px; max-width:18ch;">Maps a space in 3D, then decides where light belongs.</h2>
+    <div class="proof">
+      <div class="pcard reveal"><div class="film" style="aspect-ratio:16/11"><video muted loop playsinline preload="metadata" poster="../../assets/room-layout.jpg"><source src="../../assets/room-layout.mp4" type="video/mp4"></video><span class="tag mono">Layout</span></div><div class="meta"><h3>Reads the geometry</h3><p>Walls, floors and furniture, reconstructed live.</p></div></div>
+      <div class="pcard reveal"><div class="film" style="aspect-ratio:16/11"><video muted loop playsinline preload="metadata" poster="../../assets/room-seg.jpg"><source src="../../assets/room-seg.mp4" type="video/mp4"></video><span class="tag mono">Segmentation</span></div><div class="meta"><h3>Labels every surface</h3><p>Table, chair, wall, door, each one understood.</p></div></div>
+      <div class="pcard reveal"><div class="film" style="aspect-ratio:16/11"><video muted loop playsinline preload="metadata" poster="../../assets/rooms-grid.jpg"><source src="../../assets/rooms-grid.mp4" type="video/mp4"></video><span class="tag mono">Any room</span></div><div class="meta"><h3>Generalises anywhere</h3><p>The same model works across rooms it has never seen.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CALLOUT -->
+<section style="padding:96px 0; text-align:center; position:relative; z-index:5;">
+  <div class="wrap"><p style="font-family:var(--font-display); font-weight:500; font-size:clamp(22px,2.8vw,32px); line-height:1.32; letter-spacing:-.012em; max-width:27ch; margin:0 auto; color:var(--paper);">Only light projects. Black stays invisible. The content feels like part of the wall, <em style="font-style:normal; color:var(--accent)">not imposed on it.</em></p></div>
+</section>
+
+<!-- WHY -->
+<section class="band why" id="why">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow reveal">The headset ceiling</span>
+      <h2 class="h2 reveal" style="margin-top:18px;">Wearables ask you to put the future on your face. <em>People take it off.</em></h2>
+      <p class="lede reveal">The headset is a dead end. The hardware keeps getting better and people keep taking it off. The display has to move off the body and into the room: always on, shared by everyone present, nothing to charge or strap on. And the AI that makes it possible (real-time scene understanding, surface mapping, on-device inference) only crossed the viability line in the last twelve months. That is why now.</p>
+    </div>
+    <div class="whyfilm reveal">
+      <video muted loop playsinline preload="metadata" poster="../../assets/artwork.jpg"><source src="../../assets/artwork.mp4" type="video/mp4"></video>
+      <div class="cap mono">ANY SURFACE · ANY CONTENT</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM + ASK -->
+<section class="band" id="invest">
+  <div class="wrap">
+    <div class="ask reveal">
+      <span class="eyebrow">The team &amp; the ask</span>
+      <h2 class="h2" style="margin-top:18px;">We helped ship <b>Apple Vision Pro</b> and <b>Even Realities</b> glasses. We watched people take both off. So we built this.</h2>
+      <p class="team">Two engineers from inside the two dominant approaches to AR: the headset and the glasses. We built a real-time projection system that tracks moving objects and maps surfaces on the fly, and it won a <b>national gold medal</b>, recognized by the U.S. Senate. The hard part, projecting onto arbitrary surfaces with real-time tracking, already works. Now we are adding the AI scene-understanding layer that only became available this year.</p>
+      <div class="stat">
+        <div><b>1</b><span>device per room</span></div>
+        <div><b>0</b><span>things to wear</span></div>
+        <div><b>∞</b><span>surfaces it can use</span></div>
+      </div>
+      <div class="cta">
+        <a class="btn solid" href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Pre-Seed%20Deck%20Request">Request the deck →</a>
+        <a class="btn" href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Early%20Access">Request access</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closeband">
+  <div class="wrap">
+    <h2 class="display reveal">Your home already has <span class="flip" id="flipword">walls</span>.<br/>We gave it <em>a mind.</em></h2>
+  </div>
+</section>
+
+<div class="wrap"><hr class="specrule"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap footin">
+    <a class="mark" href="#top">
+      <svg class="tagmark" viewBox="0 0 100 100" aria-hidden="true"><use href="#prism"/></svg>
+      <span class="word">PRISMLABS<span class="div">/</span><span class="os">PrismOS</span></span>
+    </a>
+    <span class="mono">The ambient OS for physical space</span>
+    <span class="mono">© 2026 · Pre-seed · <a href="mailto:jonatechtv@gmail.com" style="color:var(--accent)">jonatechtv@gmail.com</a></span>
+  </div>
+</footer>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 30);
+  onScroll(); addEventListener('scroll', onScroll, {passive:true});
+
+  // reveal on scroll
+  const io = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.15, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{ el.style.transitionDelay=(Math.min(i%3,2)*0.07)+'s'; io.observe(el); });
+
+  // lightweight parallax on full-bleed reels
+  const pxs = [...document.querySelectorAll('[data-parallax]')];
+  if(!reduce && pxs.length){
+    let tick=false;
+    const run=()=>{
+      const vh=innerHeight;
+      pxs.forEach(el=>{
+        const r=el.parentElement.getBoundingClientRect();
+        if(r.bottom<0||r.top>vh) return;
+        const amt=parseFloat(el.dataset.parallax)||0.15;
+        const prog=(r.top+r.height/2-vh/2)/vh;     // -1..1 through viewport
+        el.style.transform='translate3d(0,'+(prog*amt*100).toFixed(2)+'px,0)';
+      });
+      tick=false;
+    };
+    addEventListener('scroll',()=>{ if(!tick){ tick=true; requestAnimationFrame(run); } },{passive:true});
+    run();
+  }
+
+  // Play only what's on screen (mobile won't autoplay 10 videos at once).
+  const vids = [...document.querySelectorAll('video')];
+  const onScreen = new Set();
+  const tryPlay = v => { const p = v.play(); if (p && p.catch) p.catch(()=>{}); };
+  const vIO = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ const v=e.target;
+      if(e.isIntersecting){ onScreen.add(v); tryPlay(v); } else { onScreen.delete(v); v.pause(); }
+    });
+  }, {threshold:0.15});
+  vids.forEach(v=>vIO.observe(v));
+  // Some browsers block the first play() until a gesture — kick visible videos on first interaction.
+  let kicked=false;
+  const kick=()=>{ if(kicked) return; kicked=true; onScreen.forEach(tryPlay); };
+  ['pointerdown','touchstart','scroll','keydown'].forEach(ev=>addEventListener(ev, kick, {once:true, passive:true}));
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) onScreen.forEach(tryPlay); });
+
+  // closing flip-book: cycle the surface word
+  (function(){
+    const el = document.getElementById('flipword');
+    if(!el || reduce) return;
+    const words = ['walls','tables','surfaces','bookshelves','floors','doors','counters','windows','desks','ceilings','mirrors','cabinets'];
+    let i = 0;
+    setInterval(()=>{
+      el.style.transition = 'transform .32s cubic-bezier(.6,0,.3,1), opacity .32s';
+      el.style.transform = 'rotateX(-90deg)'; el.style.opacity = '0';
+      setTimeout(()=>{
+        i = (i+1) % words.length; el.textContent = words[i];
+        el.style.transition = 'none'; el.style.transform = 'rotateX(90deg)'; void el.offsetHeight;
+        el.style.transition = 'transform .32s cubic-bezier(.6,0,.3,1), opacity .32s';
+        el.style.transform = 'rotateX(0deg)'; el.style.opacity = '1';
+      }, 320);
+    }, 2300);
+  })();
+</script>
+<script src="studio.js"></script>
+</body>
+</html>

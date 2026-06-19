@@ -1,12 +1,22 @@
 [
   {
+    "id": "59562b5",
+    "name": "v14 \u00b7 59562b5",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "v14: copy overhaul per spec \u2014 no deletions, each section earns its place",
+    "changes": "commit 59562b5",
+    "url": "./",
+    "branch": "59562b5"
+  },
+  {
     "id": "eed71b2",
     "name": "v13 \u00b7 eed71b2",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "v13: kill the gradient, unify to one accent, video-first hero",
     "changes": "commit eed71b2",
-    "url": "./",
+    "url": "versions/eed71b2/index.html",
     "branch": "eed71b2"
   },
   {
