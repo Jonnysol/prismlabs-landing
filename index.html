@@ -4,6 +4,15 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PrismLabs — the room is the interface</title>
+<meta name="description" content="PrismLabs builds the first ambient operating system for physical space — one ceiling device that turns every wall, door and table into an intelligent display, then dissolves back to a bare room.">
+<meta name="theme-color" content="#0E0E0C">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PrismLabs — the room is the interface">
+<meta property="og:description" content="One ceiling device turns every wall, door and table into an intelligent display — then disappears. The ambient OS for physical space.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PrismLabs — the room is the interface">
+<meta name="twitter:description" content="One ceiling device turns every wall, door and table into an intelligent display — then disappears.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E0E0C'/%3E%3Cg transform='translate(32 32) rotate(-12) translate(-32 -32)'%3E%3Cpath d='M22 22 L42 22 L54 50 A6 6 0 0 1 48 56 L16 56 A6 6 0 0 1 10 50 Z' fill='none' stroke='%23EFE6D2' stroke-width='3' stroke-linejoin='round'/%3E%3Crect x='27' y='8' width='10' height='14' rx='1.6' fill='none' stroke='%23EFE6D2' stroke-width='3'/%3E%3Ccircle cx='32' cy='40' r='4' fill='%23E26A2C'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -14,6 +23,7 @@
     --orange:#E26A2C; --orange-2:#F0A24A; --orange-deep:#B6481E;
     --ink:#1B2A20; --mute:#6E6650; --rule:#C9BC9C;
     --black:#0E0E0C; --black-2:#070707;
+    --mute-dark:#7e7964;
     --maxw:1180px;
   }
   *{ box-sizing:border-box; }
@@ -160,6 +170,9 @@
   .use .surf{ display:block; margin-top:16px; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--mute); }
   @media(max-width:820px){ .use:nth-child(2n){ border-right:0; padding-right:0; } .use:nth-child(2n+1){ padding-right:24px; } }
 
+  /* CONCEPT TAG */
+  .demo .film .concept-tag{ position:absolute; top:14px; right:16px; z-index:2; font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:rgba(239,230,210,.25); }
+
   /* AMBIENT cards */
   .ambient{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:56px; }
   @media(max-width:820px){ .ambient{ grid-template-columns:1fr; } }
@@ -216,9 +229,67 @@
   footer{ background:var(--black-2); color:var(--cream); border-top:1px solid #1f1f1a; padding:40px 0 48px; }
   .footin{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
   footer .meta{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#7e7964; }
+
+  /* ===== ADDED: polish + investor sections ===== */
+  /* scroll progress + anchor offset */
+  #scrollbar{ position:fixed; left:0; top:0; height:2px; width:100%; z-index:61; transform:scaleX(0); transform-origin:0 50%; background:linear-gradient(90deg,var(--orange),var(--orange-2)); will-change:transform; pointer-events:none; }
+  section[id], header[id]{ scroll-margin-top:84px; }
+  @keyframes corebreathe{ 0%,100%{ transform:translate(-50%,-50%) scale(1);} 50%{ transform:translate(-50%,-50%) scale(1.18);} }
+  .hero .core{ animation:corebreathe 3.6s ease-in-out infinite; }
+  @media(prefers-reduced-motion:reduce){ .hero .core{ animation:none; } }
+
+  /* built-card status tag */
+  .bcard .stat{ display:block; margin-top:14px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--mute); }
+  .bcard .stat.proven{ color:var(--green); }
+  .bcard .stat.build{ color:var(--orange); }
+
+  /* UNDER THE HOOD spec strip */
+  .spec{ display:grid; grid-template-columns:repeat(5,1fr); gap:0; margin-top:50px; border-top:1px solid rgba(92,115,104,.4); }
+  @media(max-width:900px){ .spec{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:560px){ .spec{ grid-template-columns:1fr; } }
+  .spec .col{ padding:24px 22px 26px 0; border-bottom:1px solid rgba(92,115,104,.4); border-right:1px solid rgba(92,115,104,.4); }
+  .spec .col:nth-child(5n){ border-right:0; padding-right:0; }
+  .spec .k{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange-2); }
+  .spec .v{ font-size:14px; line-height:1.55; color:rgba(239,230,210,.78); margin-top:12px; }
+
+  /* OBJECTIONS / MOAT */
+  .obj-lead{ border:1px solid rgba(92,115,104,.45); border-radius:16px; padding:30px 32px; background:rgba(226,106,44,.08); margin-top:46px; }
+  .obj-lead .k{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--orange-2); }
+  .obj-lead h4{ font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; font-size:clamp(26px,3.2vw,38px); color:var(--cream); margin:12px 0 14px; line-height:1.15; }
+  .obj-lead p{ margin:0; font-size:16px; line-height:1.65; color:rgba(239,230,210,.8); max-width:74ch; }
+  .obj-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; }
+  @media(max-width:820px){ .obj-grid{ grid-template-columns:1fr; } }
+
+  /* MARKET */
+  .mstats{ display:grid; grid-template-columns:repeat(3,1fr); gap:30px; margin-top:48px; }
+  @media(max-width:820px){ .mstats{ grid-template-columns:1fr; gap:26px; } }
+  .mstat{ border-top:1px solid var(--rule); padding-top:20px; }
+  .mstat .big{ font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(44px,5.5vw,72px); line-height:.9; color:var(--green); letter-spacing:-.02em; }
+  .mstat .big .o{ color:var(--orange); }
+  .mstat .small{ font-size:14px; line-height:1.5; color:var(--ink); margin-top:14px; max-width:32ch; }
+  .mline{ font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(24px,3vw,36px); color:var(--green); margin:42px 0 0; line-height:1.2; }
+  .mline .o{ color:var(--orange); }
+  .mcap{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin-top:18px; }
+
+  /* ROADMAP + ASK */
+  .raise{ display:grid; grid-template-columns:1.1fr .9fr; gap:44px; margin-top:48px; align-items:start; }
+  @media(max-width:900px){ .raise{ grid-template-columns:1fr; gap:30px; } }
+  .rmap{ display:grid; gap:0; }
+  .rstep{ display:grid; grid-template-columns:84px 1fr; gap:18px; align-items:start; border-top:1px solid rgba(92,115,104,.4); padding:16px 0; }
+  .rstep:last-child{ border-bottom:1px solid rgba(92,115,104,.4); }
+  .rstep .st{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.18em; color:var(--orange); padding-top:3px; }
+  .rstep h4{ margin:0 0 5px; font-family:'Geist',sans-serif; font-weight:800; font-size:17px; color:var(--cream); letter-spacing:-.02em; }
+  .rstep p{ margin:0; font-size:13.5px; line-height:1.5; color:rgba(239,230,210,.62); }
+  .askbox{ background:var(--green); border-radius:16px; padding:32px 34px; }
+  .askbox .k{ font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--orange-2); }
+  .askbox .q{ font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(22px,2.4vw,29px); line-height:1.28; color:var(--cream); margin:14px 0 20px; }
+  .askrow{ display:grid; grid-template-columns:auto 1fr; gap:12px; padding:13px 0; border-top:1px dashed rgba(239,230,210,.2); font-size:14px; line-height:1.5; color:rgba(239,230,210,.82); }
+  .askrow b{ color:var(--cream); font-weight:600; }
+  .askrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--orange); margin-top:6px; }
 </style>
 </head>
 <body id="top">
+<div id="scrollbar" aria-hidden="true"></div>
 
 <!-- ===== reusable flask mark ===== -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -246,6 +317,8 @@
       <a href="#device">The device</a>
       <a href="#how">How it works</a>
       <a href="#demos">Demos</a>
+      <a href="#market">The market</a>
+      <a href="#raise">Investors</a>
       <a href="#access" class="btn orange">Request a demo</a>
     </div>
   </div>
@@ -362,32 +435,32 @@
   <div class="wrap">
     <div class="sechead reveal">
       <span class="marker orange">─── 04 · the demo library</span>
-      <h2 class="display" style="color:var(--cream);">eight moments that sell themselves.</h2>
-      <p style="max-width:48ch; font-size:18px; line-height:1.6; color:rgba(239,230,210,.6); margin-top:22px;">Each scenario turns on a single magic beat. These are what gets filmed.</p>
+      <h2 class="display" style="color:var(--cream);">the moments that sell themselves.</h2>
+      <p style="max-width:50ch; font-size:18px; line-height:1.6; color:rgba(239,230,210,.6); margin-top:22px;">Each scenario is one device replacing a different screen you own today — the TV, the tablet, the smart display, the monitor. Same fixture, different surface.</p>
     </div>
     <div class="demos">
       <div class="demo feat reveal">
-        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQNLQ8tbXQbXMyqWss92p3nvYiYeGTApQtvSH3nBZmyjxd4LwaQu58PRAwVHBfWikDlYalgcM_RuoaO16FCySBLuhXc5JFd_jl3YjTxU6txKYw.mp4?_nc_cat=110&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=GvDdn3S8mPcQ7kNvwGbuYjI&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoxNzQxMDkwMTY2NTI4ODM4LCJhc3NldF9hZ2VfZGF5cyI6MzMxLCJ2aV91c2VjYXNlX2lkIjoxMDgyNSwiZHVyYXRpb25fcyI6ODYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=db0d412226623d4a&_nc_vs=HBksFQIYRWZiX3Blcm1hbmVudC8zRjRFNkFFNEU0M0ZERUY0RjZGMDg0MUQ4ODJDNDBCQ19tdF8yX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhAZmJfcGVybWFuZW50LzhDNDNDMTgwOTRBNjg1NEE2Qjg4MDJDREFGMTQyNEEwX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACaM7a7O5OCXBhUCKAJDMywXQFWo9cKPXCkYGWRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHARAHUCZZKpAQA&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&_nc_zt=28&oh=00_Af8cngQwv722urmx76wBvCjimwoflev3UgqjJkiCO0OLEw&oe=6A391E86&bitrate=749601&tag=dash_h264-basic-gen2_720p"></video><span class="tg">05 · THE COMPANION</span><span class="lb">a softly glowing figure walks wall to wall as you move</span></div>
-        <div class="meta"><h4>The Companion</h4><p><span class="beat">Magic beat:</span> the assistant has a body and a place in the room — not a voice from a puck.</p></div>
+        <div class="film"><span class="concept-tag">concept</span><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNSY8su3O249CIJhS6Ret984KQR9YVb7JPY8WSV8oGgCSow1l7Qz7xvUxeJQ3Wt9N5MrBp9kQ_zbkbESQu92iHc.mp4?strext=1&_nc_cat=101&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=ny4tXWHDny8Q7kNvwGxpsFV&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTkyMC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl8xMDgwcCIsInhwdl9hc3NldF9pZCI6OTIzMzIzNDI2MTEzMDA2LCJhc3NldF9hZ2VfZGF5cyI6NTk2LCJ2aV91c2VjYXNlX2lkIjoxMDgyMSwiZHVyYXRpb25fcyI6MzAsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=9beefba3363eed5b&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQmxzdVJ1YXdmeWE0aE1DQUk1M3hKTUF0NWdlYnY0R0FBQUYVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQVg3cWhrYXlIUzVHRllEQUNZUVZJa3hLWkJ4YnY0R0FBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm3Jeczb_wowMVAigCQzMsF0A-AAAAAAAAGBpkYXNoX2gyNjQtYmFzaWMtZ2VuMl8xMDgwcBEAdQJliqkBAA&_nc_gid=RXTIzCxHc0D35CJivXpUqg&_nc_ss=7b289&_nc_zt=28&oh=00_Af_H_bAid8PKnkhVYObnuXIkY0OfGEqnqRxIeMSoJTctzg&oe=6A3916B5&bitrate=1617930&tag=dash_h264-basic-gen2_1080p"></video><span class="tg">04 · DOORBELL</span><span class="lb">the front door turns transparent</span></div>
+        <div class="meta"><h4>Doorbell Passthrough</h4><p><span class="beat">Magic beat:</span> your front door turns transparent &mdash; you see who&rsquo;s there, on the door itself.</p></div>
       </div>
       <div class="demo reveal">
-        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNSY8su3O249CIJhS6Ret984KQR9YVb7JPY8WSV8oGgCSow1l7Qz7xvUxeJQ3Wt9N5MrBp9kQ_zbkbESQu92iHc.mp4?strext=1&_nc_cat=101&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=ny4tXWHDny8Q7kNvwGxpsFV&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTkyMC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl8xMDgwcCIsInhwdl9hc3NldF9pZCI6OTIzMzIzNDI2MTEzMDA2LCJhc3NldF9hZ2VfZGF5cyI6NTk2LCJ2aV91c2VjYXNlX2lkIjoxMDgyMSwiZHVyYXRpb25fcyI6MzAsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=9beefba3363eed5b&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQmxzdVJ1YXdmeWE0aE1DQUk1M3hKTUF0NWdlYnY0R0FBQUYVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQVg3cWhrYXlIUzVHRllEQUNZUVZJa3hLWkJ4YnY0R0FBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm3Jeczb_wowMVAigCQzMsF0A-AAAAAAAAGBpkYXNoX2gyNjQtYmFzaWMtZ2VuMl8xMDgwcBEAdQJliqkBAA&_nc_gid=RXTIzCxHc0D35CJivXpUqg&_nc_ss=7b289&_nc_zt=28&oh=00_Af_H_bAid8PKnkhVYObnuXIkY0OfGEqnqRxIeMSoJTctzg&oe=6A3916B5&bitrate=1617930&tag=dash_h264-basic-gen2_1080p"></video><span class="tg">04 · DOORBELL</span><span class="lb">the front door turns transparent</span></div>
-        <div class="meta"><h4>Doorbell Passthrough</h4><p><span class="beat">Beat:</span> you see through your own door.</p></div>
+        <div class="film"><span class="concept-tag">concept</span><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQNLQ8tbXQbXMyqWss92p3nvYiYeGTApQtvSH3nBZmyjxd4LwaQu58PRAwVHBfWikDlYalgcM_RuoaO16FCySBLuhXc5JFd_jl3YjTxU6txKYw.mp4?_nc_cat=110&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=GvDdn3S8mPcQ7kNvwGbuYjI&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoxNzQxMDkwMTY2NTI4ODM4LCJhc3NldF9hZ2VfZGF5cyI6MzMxLCJ2aV91c2VjYXNlX2lkIjoxMDgyNSwiZHVyYXRpb25fcyI6ODYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=db0d412226623d4a&_nc_vs=HBksFQIYRWZiX3Blcm1hbmVudC8zRjRFNkFFNEU0M0ZERUY0RjZGMDg0MUQ4ODJDNDBCQ19tdF8yX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhAZmJfcGVybWFuZW50LzhDNDNDMTgwOTRBNjg1NEE2Qjg4MDJDREFGMTQyNEEwX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACaM7a7O5OCXBhUCKAJDMywXQFWo9cKPXCkYGWRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHARAHUCZZKpAQA&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&_nc_zt=28&oh=00_Af8cngQwv722urmx76wBvCjimwoflev3UgqjJkiCO0OLEw&oe=6A391E86&bitrate=749601&tag=dash_h264-basic-gen2_720p"></video><span class="tg">05 · THE COMPANION</span><span class="lb">a softly glowing figure walks wall to wall as you move</span></div>
+        <div class="meta"><h4>The Companion</h4><p><span class="beat">Beat:</span> the assistant has a body and a place in the room — not a voice from a puck.</p></div>
       </div>
       <div class="demo reveal">
-        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQMHEeAh1dvQ3QKO0Y_FPokFwcDHh6PbpVMA9snpTurFrb_VKpM7w219XS8YLcaK3NC-gHN53De8gqsQtUpTIuMO.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=tN0QbhjheqQQ7kNvwGum1pf&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTkxNTU1OTIwODg2MzAyOSwiYXNzZXRfYWdlX2RheXMiOjgxOSwidmlfdXNlY2FzZV9pZCI6MTAxMjgsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&_nc_zt=28&oh=00_Af_f0F_g7X8P219gCV3-Ksz_J2XU8QCCQvchc3CBiw2r4w&oe=6A3915DF&bitrate=359126&tag=sve_sd"></video><span class="tg">00 · KITCHEN</span><span class="lb">recipe tracks the cook&rsquo;s hands</span></div>
+        <div class="film"><span class="concept-tag">concept</span><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQMHEeAh1dvQ3QKO0Y_FPokFwcDHh6PbpVMA9snpTurFrb_VKpM7w219XS8YLcaK3NC-gHN53De8gqsQtUpTIuMO.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=tN0QbhjheqQQ7kNvwGum1pf&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTkxNTU1OTIwODg2MzAyOSwiYXNzZXRfYWdlX2RheXMiOjgxOSwidmlfdXNlY2FzZV9pZCI6MTAxMjgsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&_nc_zt=28&oh=00_Af_f0F_g7X8P219gCV3-Ksz_J2XU8QCCQvchc3CBiw2r4w&oe=6A3915DF&bitrate=359126&tag=sve_sd"></video><span class="tg">00 · KITCHEN</span><span class="lb">recipe tracks the cook&rsquo;s hands</span></div>
         <div class="meta"><h4>The Kitchen</h4><p><span class="beat">Beat:</span> steps follow the work, not a propped phone.</p></div>
       </div>
       <div class="demo reveal">
-        <div class="film"><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNL_sPL6371pgpOIm87P1cXaPGN8MunUVaiosz2-jP3cy-Y3DccDZHCkHp_buisad2dyj6RUiYNffulYttE27H6.mp4?strext=1&_nc_cat=100&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=5U1-qLH2JSwQ7kNvwGG3zUg&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNzIwLmRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHAiLCJ4cHZfYXNzZXRfaWQiOjc1Mzk2NzU5Mjg0NzMxNSwiYXNzZXRfYWdlX2RheXMiOjU5NiwidmlfdXNlY2FzZV9pZCI6MTA4MjEsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=1a610a3670f146e1&_nc_vs=HBkcFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HTUJ0dWhzcGFfVkNOZ2NDQUlqQWN1Q0VpOFlWYnY0R0FBQUYVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmpt_ZqNju1gIVAigCQzMsF0A0AAAAAAAAGBlkYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwEQB1AmWKqQEA&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&_nc_zt=28&oh=00_Af-5tEJ5om1ssVvhzqOHVqc1dDkHVks6lJOQRqksyMrH3A&oe=6A392C36&bitrate=0&tag=dash_h264-basic-gen2_720p"></video><span class="tg">06 · CLICKY IRL</span><span class="lb">projected buttons on a bare wall</span></div>
-        <div class="meta"><h4>Clicky IRL</h4><p><span class="beat">Beat:</span> a plain wall responds to a real press.</p></div>
+        <div class="film"><span class="concept-tag">concept</span><video autoplay muted loop playsinline preload="metadata" src="https://video-den2-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNL_sPL6371pgpOIm87P1cXaPGN8MunUVaiosz2-jP3cy-Y3DccDZHCkHp_buisad2dyj6RUiYNffulYttE27H6.mp4?strext=1&_nc_cat=100&_nc_sid=5e9851&_nc_ht=video-den2-1.xx.fbcdn.net&_nc_ohc=5U1-qLH2JSwQ7kNvwGG3zUg&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNzIwLmRhc2hfaDI2NC1iYXNpYy1nZW4yXzcyMHAiLCJ4cHZfYXNzZXRfaWQiOjc1Mzk2NzU5Mjg0NzMxNSwiYXNzZXRfYWdlX2RheXMiOjU5NiwidmlfdXNlY2FzZV9pZCI6MTA4MjEsImR1cmF0aW9uX3MiOjIwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&vs=1a610a3670f146e1&_nc_vs=HBkcFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HTUJ0dWhzcGFfVkNOZ2NDQUlqQWN1Q0VpOFlWYnY0R0FBQUYVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmpt_ZqNju1gIVAigCQzMsF0A0AAAAAAAAGBlkYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwEQB1AmWKqQEA&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&_nc_zt=28&oh=00_Af-5tEJ5om1ssVvhzqOHVqc1dDkHVks6lJOQRqksyMrH3A&oe=6A392C36&bitrate=0&tag=dash_h264-basic-gen2_720p"></video><span class="tg">06 · TOUCH ANYWHERE</span><span class="lb">a bare wall answers a real press</span></div>
+        <div class="meta"><h4>Touch Anywhere</h4><p><span class="beat">Beat:</span> a bare wall takes a real press &mdash; controls, registered to the surface.</p></div>
       </div>
       <div class="demo reveal">
-        <div class="film"><img src="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/434069040_708526774524906_7376808912820184909_n.png?_nc_cat=104&ccb=1-7&_nc_sid=f537c7&_nc_ohc=YMWHRzyzNGIQ7kNvwHFSwRz&_nc_oc=Adr9cxOYple-UiPNRQRm31G1_9WysvOsF60V9oGWj1HHLX_S1IwW3uFf96HCqavcN5yhkkpSnamw_1g6uppS_0NV&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&oh=00_Af9x7Sl3T3-GJMK4_sNCRedeyCaFCIrXWK8vesWz6us53A&oe=6A391A15" alt="Overhead flights demo"><span class="tg">03 · OVERHEAD</span><span class="lb">the ceiling traces the plane above</span></div>
+        <div class="film"><span class="concept-tag">concept</span><img src="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/434069040_708526774524906_7376808912820184909_n.png?_nc_cat=104&ccb=1-7&_nc_sid=f537c7&_nc_ohc=YMWHRzyzNGIQ7kNvwHFSwRz&_nc_oc=Adr9cxOYple-UiPNRQRm31G1_9WysvOsF60V9oGWj1HHLX_S1IwW3uFf96HCqavcN5yhkkpSnamw_1g6uppS_0NV&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=zmvi2mg6syBZ-LZFHLiYcA&_nc_ss=7b289&oh=00_Af9x7Sl3T3-GJMK4_sNCRedeyCaFCIrXWK8vesWz6us53A&oe=6A391A15" alt="Overhead flights demo"><span class="tg">03 · OVERHEAD</span><span class="lb">the ceiling traces the plane above</span></div>
         <div class="meta"><h4>Overhead Flights</h4><p><span class="beat">Beat:</span> the ceiling becomes a window to the sky.</p></div>
       </div>
       <div class="demo reveal">
-        <div class="film"><img src="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/418313664_371450952509068_2177003005345975293_n.png?_nc_cat=101&ccb=1-7&_nc_sid=f537c7&_nc_ohc=NVSb4q-8rA4Q7kNvwEGjH1H&_nc_oc=AdpietRF60MBmVtFkY5FUHy-duL1nkZJ96WQatoIWHM7uXVgd8rmkIzEHK4jmTtDwi1sUSkWEavj5jWT7D_mhUOu&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&oh=00_Af-V_bCjogr9-T9JuoH5rbcSHDLLddskn7hb4kTT_lXDmA&oe=6A393696" alt="The knob reborn demo"><span class="tg">07 · THE KNOB</span><span class="lb">a dumb dial gains a glowing readout</span></div>
+        <div class="film"><span class="concept-tag">concept</span><img src="https://scontent-den2-1.xx.fbcdn.net/v/t39.8562-6/418313664_371450952509068_2177003005345975293_n.png?_nc_cat=101&ccb=1-7&_nc_sid=f537c7&_nc_ohc=NVSb4q-8rA4Q7kNvwEGjH1H&_nc_oc=AdpietRF60MBmVtFkY5FUHy-duL1nkZJ96WQatoIWHM7uXVgd8rmkIzEHK4jmTtDwi1sUSkWEavj5jWT7D_mhUOu&_nc_zt=14&_nc_ht=scontent-den2-1.xx&_nc_gid=dEbqrpT557wbv8gGyuQQpg&_nc_ss=7b289&oh=00_Af-V_bCjogr9-T9JuoH5rbcSHDLLddskn7hb4kTT_lXDmA&oe=6A393696" alt="The knob reborn demo"><span class="tg">07 · THE KNOB</span><span class="lb">a dumb dial gains a glowing readout</span></div>
         <div class="meta"><h4>The Knob Reborn</h4><p><span class="beat">Beat:</span> old hardware wakes up, unreplaced.</p></div>
       </div>
     </div>
@@ -440,6 +513,7 @@
     <div class="sechead reveal">
       <span class="marker amber">─── 06 · ambient, not aggressive</span>
       <h2 class="display" style="color:var(--cream);">part of the room, never imposed on it.</h2>
+      <p class="reveal" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(22px,2.6vw,30px); color:var(--orange-2); margin:20px 0 0; max-width:34ch; line-height:1.3;">Only light projects. Black stays invisible. Content doesn&rsquo;t replace the wall — it appears on it, like digital ink.</p>
     </div>
     <div class="ambient">
       <div class="acard reveal"><div class="k">design the absence</div><h4>quiet is the default.</h4><p>Content appears when it&rsquo;s needed and dissolves cleanly when it isn&rsquo;t — giving the surface back. The empty wall matters as much as the active one.</p></div>
@@ -455,32 +529,102 @@
     <div class="sechead reveal">
       <span class="marker">─── 07 · what we&rsquo;ve built</span>
       <h2 class="display">we&rsquo;ve already built the hard part.</h2>
-      <p style="max-width:50ch; font-size:18px; line-height:1.6; color:var(--mute); margin-top:22px;">This isn&rsquo;t a render. A working device sees a real room and projects onto it today &mdash; everything in the demo library above is real footage.</p>
+      <p style="max-width:52ch; font-size:18px; line-height:1.6; color:var(--mute); margin-top:22px;">We proved this works two years ago &mdash; a real-time projection system that won a national gold medal. Now we&rsquo;re rebuilding it with AI scene understanding that didn&rsquo;t exist when we first cracked the hard problem.</p>
     </div>
 
     <div class="built-grid">
-      <div class="bcard reveal"><span class="chk">✓</span><h4>A working device</h4><p>Sees a room in infrared + depth and projects perspective-corrected light onto any surface &mdash; running today, not simulated.</p></div>
-      <div class="bcard reveal"><span class="chk">✓</span><h4>On-device spatial model</h4><p>Real-time scene understanding maps walls, doors and tables and updates the instant the room changes.</p></div>
-      <div class="bcard reveal"><span class="chk">✓</span><h4>The full demo library, shot</h4><p>All eight signature scenarios captured as real footage on the prototype &mdash; the reels playing on this page.</p></div>
-      <div class="bcard reveal"><span class="chk">✓</span><h4>Projection onto moving objects</h4><p>Our gold-medal tracking-and-projection system, now generalized to a whole room instead of a single target.</p></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>Projection onto moving objects</h4><p>The core technical challenge was solved in v1 &mdash; real-time tracking and perspective-corrected projection onto arbitrary surfaces, proven in national competition.</p><span class="stat proven">● proven · 2 yrs ago</span></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>On-device spatial model</h4><p>Real-time scene understanding maps walls, doors and tables and updates the instant the room changes &mdash; running locally, nothing leaves the room.</p><span class="stat build">● in build</span></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>The full vision, designed</h4><p>Eight signature scenarios fully designed and spec&rsquo;d &mdash; from doorbell passthrough to the walking companion.</p><span class="stat proven">● designed</span></div>
+      <div class="bcard reveal"><span class="chk">✓</span><h4>v2 in active build</h4><p>Upgraded with AI scene understanding (SceneScript-class spatial models), on-device inference via Google Coral, and 360° precision motor control.</p><span class="stat build">● in build</span></div>
     </div>
 
     <div class="pmf reveal">
-      <div class="pmf-k">why we think we&rsquo;re near product-market fit</div>
+      <div class="pmf-k">why we&rsquo;re already pulling demand</div>
       <p class="pmf-q">Every demo ends with the same sentence: <span class="q">&ldquo;when can I buy one?&rdquo;</span></p>
       <div class="pmf-stats">
-        <div><b>[ &mdash; ]</b><span>on the early-access waitlist</span></div>
-        <div><b>[ &mdash; ]</b><span>pilot conversations underway</span></div>
-        <div><b>100%</b><span>of live demos ask &ldquo;what else can it do?&rdquo;</span></div>
+        <div><b>100%</b><span>of people who see the concept ask &ldquo;what else can it do?&rdquo;</span></div>
+        <div><b>0</b><span>headsets, apps or accounts between them and it</span></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ===== UNDER THE HOOD ===== -->
+<section class="band green" id="under-the-hood">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker amber">─── 08 · under the hood</span>
+      <h2 class="display" style="color:var(--cream);">one ceiling unit. five subsystems.</h2>
+      <p style="max-width:52ch; font-size:18px; line-height:1.6; color:rgba(239,230,210,.6); margin-top:22px;">Each chosen for a reason &mdash; and the hardest of them already proven.</p>
+    </div>
+    <div class="spec">
+      <div class="col reveal"><div class="k">sensing</div><div class="v">Infrared + depth. Maps geometry in the dark &mdash; it sees the room, not faces.</div></div>
+      <div class="col reveal"><div class="k">compute</div><div class="v">On-device inference on Google Coral. A SceneScript-class spatial model, no cloud round-trip.</div></div>
+      <div class="col reveal"><div class="k">optics</div><div class="v">Short-throw additive light, perspective-corrected per surface. Only light renders; black is the absence of projection.</div></div>
+      <div class="col reveal"><div class="k">motion</div><div class="v">360° precision motor. Aims the throw to any surface and holds registration as the room changes.</div></div>
+      <div class="col reveal"><div class="k">latency</div><div class="v">Closed-loop see&rarr;aim&rarr;project at interactive frame-rate &mdash; the tracking core proven in v1.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== THE PHYSICS IS THE MOAT ===== -->
+<section class="band dark" id="moat">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker orange">─── 09 · the physics is the moat</span>
+      <h2 class="display" style="color:var(--cream);">the questions you&rsquo;re already asking.</h2>
+    </div>
+    <div class="obj-lead reveal">
+      <div class="k">&ldquo;but projection washes out in a lit room&rdquo;</div>
+      <h4>Washout isn&rsquo;t a failure mode. It&rsquo;s the physics.</h4>
+      <p>We project additive light &mdash; only lit pixels exist. Black is never drawn dark; it&rsquo;s simply not drawn, so the wall shows through. Content doesn&rsquo;t cover your room, it appears on it, like digital ink on the surface that&rsquo;s already there. The thing every projector startup apologizes for is the thing that makes ours disappear.</p>
+    </div>
+    <div class="obj-grid">
+      <div class="acard reveal"><div class="k">&ldquo;why won&rsquo;t Apple or Google just do this?&rdquo;</div><h4>Because we watched them bet the other way.</h4><p>Our founder spent two years inside Apple&rsquo;s spatial program. The trillion-dollar roadmaps are committed to the face &mdash; the display you wear. Ambient projection is a different architecture, off-strategy for the incumbents. We&rsquo;re not racing Apple; we&rsquo;re building the category they chose to skip.</p></div>
+      <div class="acard reveal"><div class="k">&ldquo;what&rsquo;s actually defensible?&rdquo;</div><h4>A two-year head start on the only hard part.</h4><p>The optics are buyable. The system that makes them vanish is not &mdash; real-time tracking, per-surface correction, and a calibration-and-surface flywheel that sharpens with every room it maps. A clone has to match the projector and the on-device model and the room data at once.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== THE MARKET ===== -->
+<section class="band cream" id="market">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker">─── 10 · the market</span>
+      <h2 class="display">every screen in the room<br/>collapses into one fixture.</h2>
+      <p style="max-width:52ch; font-size:18px; line-height:1.6; color:var(--mute); margin-top:22px;">A modern home runs a TV, two monitors, a tablet, a smart display, and a phone propped against a coffee mug &mdash; five-plus single-surface devices you bought, mounted, and will replace. We don&rsquo;t replace the unit. We replace the category.</p>
+    </div>
+    <div class="mstats">
+      <div class="mstat reveal"><div class="big"><span class="o">$300B+</span></div><div class="small">annual global spend on the displays, TVs, monitors and smart screens we sit upstream of.</div></div>
+      <div class="mstat reveal"><div class="big">5+</div><div class="small">discrete screens in the average home today &mdash; each one a fixture this device subsumes.</div></div>
+      <div class="mstat reveal"><div class="big">1</div><div class="small">fixture per room, sold once, that becomes the surface everything else renders onto.</div></div>
+    </div>
+    <p class="mline reveal">This isn&rsquo;t a better screen. <span class="o">It&rsquo;s the end of buying screens.</span></p>
+    <div class="mcap reveal">Beachhead: the design-forward home &middot; Expansion: office, factory, classroom &mdash; every ceiling is a socket</div>
+  </div>
+</section>
+
+<!-- ===== WHY NOW ===== -->
+<section class="band dark" id="why-now">
+  <div class="wrap">
+    <div class="sechead reveal">
+      <span class="marker orange">─── 11 · why now</span>
+      <h2 class="display" style="color:var(--cream);">impossible eighteen months ago.</h2>
+    </div>
+    <div class="ambient">
+      <div class="acard reveal"><div class="k">perception solved</div><h4>scene understanding crossed the line.</h4><p>Real-time, on-device spatial models can now segment a room &mdash; walls, doors, tables, hands &mdash; in milliseconds. The problem that gated this for a decade was cracked in the last year.</p></div>
+      <div class="acard reveal"><div class="k">inference left the cloud</div><h4>a few dollars of silicon.</h4><p>Edge accelerators like Google Coral run these models locally, in real time &mdash; no round-trip, no privacy tax, no per-room GPU bill.</p></div>
+      <div class="acard reveal"><div class="k">the ceiling is visible</div><h4>the headset hit its wall.</h4><p>After Vision Pro and a generation of AR glasses, the industry has seen it: wearables are extraordinary, and people still take them off. The market is ready for the answer that isn&rsquo;t on your face.</p></div>
+    </div>
+    <p class="reveal" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:clamp(22px,2.6vw,32px); color:var(--orange-2); margin:42px 0 0; max-width:42ch; line-height:1.3;">We proved the hardware two years ago. The intelligence to make it understand a room only arrived now. We&rsquo;re standing exactly where those two curves cross.</p>
   </div>
 </section>
 
 <!-- ===== NUMBERS ===== -->
 <section class="band deep">
   <div class="wrap">
-    <span class="marker reveal" style="display:block; color:#7e7964;">─── 08 · the shape of it</span>
+    <span class="marker reveal" style="display:block; color:#7e7964;">─── 12 · the shape of it</span>
     <div class="nums">
       <div class="num reveal"><div class="big" style="color:var(--orange);">0</div><div class="small">things to wear</div></div>
       <div class="num reveal"><div class="big" style="color:var(--orange-2);">1</div><div class="small">device per room</div></div>
@@ -490,22 +634,48 @@
   </div>
 </section>
 
-<!-- ===== TEAM / WHY NOW ===== -->
+<!-- ===== PROOF -> PRODUCT / THE ASK ===== -->
+<section class="band deep" id="raise">
+  <div class="wrap">
+    <span class="marker reveal" style="display:block; color:var(--mute-dark);">─── 13 · proof → product</span>
+    <div class="raise">
+      <div class="reveal">
+        <h2 class="display" style="color:var(--cream); font-size:clamp(30px,4vw,50px);">from a proven prototype<br/>to ten ceilings.</h2>
+        <div class="rmap" style="margin-top:30px;">
+          <div class="rstep"><div class="st">NOW</div><div><h4>v2 in active build</h4><p>On-device scene understanding + 360° motor control on the working prototype.</p></div></div>
+          <div class="rstep"><div class="st">NEXT</div><div><h4>ten reference installs</h4><p>A production reference unit, installed in ten real homes — this raise.</p></div></div>
+          <div class="rstep"><div class="st">THEN</div><div><h4>developer SDK</h4><p>Third parties build experiences on the surface layer we own.</p></div></div>
+          <div class="rstep"><div class="st">SCALE</div><div><h4>first commercial fixture ships</h4><p>The ambient OS, in ceilings you can buy.</p></div></div>
+        </div>
+      </div>
+      <div class="askbox reveal">
+        <div class="k">─── the ask</div>
+        <p class="q">We&rsquo;re raising a pre-seed round to turn a proven prototype into ten installed reference units.</p>
+        <div class="askrow"><span class="dot"></span><div><b>Hardware.</b> Productionize the v2 fixture into a unit that installs in a real ceiling.</div></div>
+        <div class="askrow"><span class="dot"></span><div><b>Spatial AI.</b> Harden on-device scene understanding across messy, real-world rooms.</div></div>
+        <div class="askrow"><span class="dot"></span><div><b>Proof.</b> Ten design-partner homes generating the footage, data and demand that de-risk the seed.</div></div>
+        <a href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Pre-Seed%20%E2%80%94%20Deck%20Request" class="btn orange">See the deck →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEAM ===== -->
 <section class="band cream">
   <div class="wrap">
-    <span class="marker reveal" style="display:block; margin-bottom:32px;">─── 09 · the team &amp; why now</span>
+    <span class="marker reveal" style="display:block; margin-bottom:32px;">─── 14 · the team</span>
     <div class="founder">
       <div class="note reveal">
-        <p class="big">Built by the engineers who shipped the last generation of spatial computing &mdash; and left to build the next one.</p>
-        <p>PrismLabs is started by engineers from <b>Snap Spectacles</b> and <b>Meta&rsquo;s Reality Labs</b> smart-glasses programs, alongside <b>Apple engineers from the Vision Products Group</b> who helped ship Apple Vision Pro and worked inside its special-projects teams.</p>
+        <p class="big">Built by the engineer who spent two years inside Apple&rsquo;s spatial computing program &mdash; and left to put the display where it belongs.</p>
+        <p>PrismLabs is founded by an <b>Apple Vision Pro engineer</b> who spent two years inside the most ambitious AR/VR hardware effort ever undertaken &mdash; and saw firsthand exactly where the wearable ceiling is. Alongside a co-founder from <b>Even Realities</b>, building the next generation of AR glasses, with deep hardware, optics and robotics expertise from inside the industry.</p>
         <p>We spent years building the headset future &mdash; and watched people take the hardware off after thirty minutes, every time. So we stopped putting the display on the face and started putting it on the room.</p>
         <div class="sig">&mdash; the PrismLabs team</div>
       </div>
       <div class="whycard reveal">
         <h4>the people &amp; the window</h4>
-        <div class="whyrow"><span class="dot"></span><div><b>Apple Vision Products Group.</b> Helped ship Apple Vision Pro &mdash; the most ambitious spatial computing hardware ever made.</div></div>
-        <div class="whyrow"><span class="dot"></span><div><b>Snap Spectacles &amp; Meta Reality Labs.</b> Shipped consumer smart glasses at the companies that defined the category.</div></div>
-        <div class="whyrow"><span class="dot"></span><div><b>A gold-medal projection system</b> that tracked moving objects in real time &mdash; recognized by the U.S. Senate.</div></div>
+        <div class="whyrow"><span class="dot"></span><div><b>Apple Vision Pro &mdash; two years inside.</b> The most ambitious spatial computing hardware ever built, and a clear-eyed view of exactly where wearable AR tops out.</div></div>
+        <div class="whyrow"><span class="dot"></span><div><b>Even Realities &mdash; next-gen AR optics.</b> Co-founder from the team building the next generation of AR glasses &mdash; hardware, optics and robotics from inside the industry.</div></div>
+        <div class="whyrow"><span class="dot"></span><div><b>A gold-medal projection system</b> that tracked moving objects in real time &mdash; national SkillsUSA gold in IoT &amp; Smart Home, first in the U.S., recognized by U.S. Senator Mark Warner.</div></div>
         <div class="whyrow"><span class="dot"></span><div><b>Scene understanding just crossed the line</b> &mdash; instant segmentation and on-device inference, only in the last twelve months. The window is open now.</div></div>
       </div>
     </div>
@@ -543,8 +713,15 @@
 </footer>
 
 <script>
+  const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const nav = document.getElementById('nav');
-  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+  const bar = document.getElementById('scrollbar');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+    const h = document.documentElement;
+    const p = h.scrollTop / ((h.scrollHeight - h.clientHeight) || 1);
+    if (bar) bar.style.transform = 'scaleX(' + Math.min(p, 1) + ')';
+  };
   onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
 
   const io = new IntersectionObserver((es)=>{
@@ -558,6 +735,54 @@
     window.location.href = 'mailto:jonatechtv@gmail.com?subject=PrismLabs%20Early%20Access&body=Hi%2C%20I%27d%20like%20early%20access.%20My%20email%3A%20' + encodeURIComponent(email);
     document.getElementById('waitlist-form').style.display = 'none';
     document.getElementById('waitlist-thanks').style.display = 'block';
+  }
+
+  // animated count-up on the numbers band (reads targets from the DOM; locked markup untouched)
+  function countUp(el){
+    const raw = el.textContent.trim();
+    const m = raw.match(/^(\d+)(\D*)$/);
+    if(!m) return;                         // ∞ and non-numerics stay as-is
+    const target = parseInt(m[1],10), suffix = m[2]||'';
+    if(reduce || target===0){ el.textContent = target+suffix; return; }
+    const dur=1100, t0=performance.now(), ease=p=>1-Math.pow(1-p,3);
+    el.style.fontVariantNumeric='tabular-nums';
+    (function tick(now){
+      const p=Math.min((now-t0)/dur,1);
+      el.textContent=Math.round(ease(p)*target)+(p>=1?suffix:'');
+      if(p<1) requestAnimationFrame(tick);
+    })(t0);
+  }
+  const numIO=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.querySelectorAll('.num .big').forEach((b,i)=>setTimeout(()=>countUp(b), i*120)); numIO.unobserve(e.target); } });
+  },{threshold:0.4});
+  const numsBand=document.querySelector('.band.deep .nums');
+  if(numsBand) numIO.observe(numsBand);
+
+  // magnetic buttons (desktop, motion allowed)
+  if(!reduce && matchMedia('(pointer:fine)').matches){
+    document.querySelectorAll('.btn').forEach(b=>{
+      b.addEventListener('pointermove',e=>{
+        const r=b.getBoundingClientRect();
+        const mx=(e.clientX-r.left-r.width/2)/r.width;
+        const my=(e.clientY-r.top-r.height/2)/r.height;
+        b.style.transform='translate('+(mx*6).toFixed(2)+'px,'+(my*5-1).toFixed(2)+'px)';
+      });
+      b.addEventListener('pointerleave',()=>{ b.style.transform=''; });
+    });
+  }
+
+  // hero signal parallax while the hero is on screen
+  const signal=document.querySelector('.hero .signal');
+  if(signal && !reduce){
+    let ticking=false;
+    window.addEventListener('scroll',()=>{
+      if(ticking) return; ticking=true;
+      requestAnimationFrame(()=>{
+        const y=window.scrollY;
+        if(y<window.innerHeight){ signal.style.transform='translate(-50%,calc(-50% + '+(y*0.18).toFixed(1)+'px))'; }
+        ticking=false;
+      });
+    },{passive:true});
   }
 </script>
 
