@@ -22,12 +22,18 @@
     --maxw:1240px;
   }
   *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; color-scheme:dark; }
   body{ margin:0; background:var(--room); color:var(--paper);
     font-family:'Archivo',system-ui,sans-serif; font-weight:400; font-stretch:100%;
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden; }
   ::selection{ background:var(--beam); color:#0b0a08; }
-  a{ color:inherit; text-decoration:none; }
+  a{ color:inherit; text-decoration:none; -webkit-tap-highlight-color:rgba(242,166,90,.25); }
+  button,a,.btn{ touch-action:manipulation; }
+  section[id],header[id]{ scroll-margin-top:88px; }
+  .skip{ position:absolute; left:-9999px; top:0; z-index:100; }
+  .skip:focus{ left:16px; top:16px; padding:10px 16px; background:var(--beam); color:#100c06;
+    font-family:'Space Mono',monospace; font-size:12px; border-radius:3px; }
+  @supports(padding:max(0px)){ .navin,.hero-in{ padding-left:max(32px,env(safe-area-inset-left)); padding-right:max(32px,env(safe-area-inset-right)); } }
   img,video{ display:block; max-width:100%; }
   .mono{ font-family:'Space Mono',ui-monospace,monospace; }
   .wrap{ width:100%; max-width:var(--maxw); margin:0 auto; padding:0 32px; }
@@ -163,6 +169,7 @@
 </style>
 </head>
 <body id="top">
+<a class="skip" href="#main">Skip to content</a>
 
 <!-- NAV -->
 <nav id="nav">
@@ -205,7 +212,7 @@
 </header>
 
 <!-- WHAT IT IS -->
-<section class="band stmt">
+<section class="band stmt" id="main">
   <div class="wrap">
     <span class="eyebrow reveal">What it is</span>
     <h2 class="display reveal">It sees the surface, projects exactly what you need, then <em>gets out of the way.</em></h2>
@@ -251,7 +258,7 @@
 </section>
 
 <!-- WHY -->
-<section class="band why">
+<section class="band why" id="why">
   <div class="wrap split">
     <div>
       <span class="eyebrow reveal">Why this, why now</span>
