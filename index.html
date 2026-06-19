@@ -3,30 +3,35 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PrismLabs · the room is the interface</title>
-<meta name="description" content="PrismLabs is one device on your ceiling. It sees the room in 3D, projects onto any surface, and disappears. The ambient OS for physical space.">
-<meta name="theme-color" content="#0E0D0B">
+<title>PrismOS — the ambient OS for physical space · PrismLabs</title>
+<meta name="description" content="PrismOS is the ambient operating layer from PrismLabs. One device sees a room in 3D and turns any surface into a live display, then disappears. Ambient interfaces for spatial intelligence.">
+<meta name="theme-color" content="#08070A">
 <meta property="og:type" content="website">
-<meta property="og:title" content="PrismLabs · the room is the interface">
-<meta property="og:description" content="One device on your ceiling. It sees the room in 3D, projects onto any surface, and disappears. The ambient OS for physical space.">
+<meta property="og:title" content="PrismOS — the ambient OS for physical space">
+<meta property="og:description" content="Ambient interfaces for spatial intelligence. The ambient operating layer from PrismLabs. Context at every surface.">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%2308070A'/%3E%3Cpath d='M32 14 L51 47 L13 47 Z' fill='none' stroke='%23E9E7E0' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cpath d='M32 14 L32 47' stroke='%23EC6F9E' stroke-width='1.4'/%3E%3Cpath d='M32 14 L13 47' stroke='%23F2A65A' stroke-width='1.4'/%3E%3Cpath d='M32 14 L51 47' stroke='%234AA3F0' stroke-width='1.4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..900&family=Inter:wght@300..800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --room:#0E0D0B; --room-2:#16130F; --room-3:#1F1A14;
-    --paper:#E9E7E0; --ink:#131210; --mute:#928C80; --mute-2:#6A6459;
-    --line:rgba(233,231,224,.13); --line-2:rgba(233,231,224,.07);
-    --beam:#F2A65A; --beam-deep:#C9742E; --scan:#7FC9D2;
+    --room:#08070A; --room-2:#100E14; --room-3:#181520;
+    --paper:#ECEAF2; --ink:#131210; --mute:#8E8AA0; --mute-2:#615D74;
+    --line:rgba(236,234,242,.13); --line-2:rgba(236,234,242,.06);
+    --beam:#F2A65A; --beam-deep:#C9742E; --scan:#5BD0D8;
+    /* ambient spectrum */
+    --c1:#F2A65A; --c2:#F0876B; --c3:#EC6F9E; --c4:#B36BE0; --c5:#6E74E8; --c6:#4AA3F0; --c7:#5BD0D8;
+    --spectrum:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c5),var(--c6),var(--c7));
+    --spectrum-soft:linear-gradient(90deg,rgba(242,166,90,.9),rgba(236,111,158,.9),rgba(179,107,224,.9),rgba(74,163,240,.9),rgba(91,208,216,.9));
     --maxw:1240px;
     /* studio-controllable */
-    --font-display:'Satoshi'; --font-body:'Satoshi'; --font-mono:'Space Mono';
+    --font-display:'Geist'; --font-body:'Inter'; --font-mono:'Space Mono';
     --hero-scale:1; --head-scale:1; --body-scale:1;
-    --disp-stretch:100%; --disp-weight:700; --disp-tracking:-.025em;
+    --disp-stretch:100%; --disp-weight:600; --disp-tracking:-.02em;
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; color-scheme:dark; }
@@ -74,12 +79,14 @@
   /* nav */
   nav{ position:fixed; top:0; left:0; right:0; z-index:40; display:flex; justify-content:center;
     transition:background .4s, border-color .4s, backdrop-filter .4s; border-bottom:1px solid transparent; }
-  nav.scrolled{ background:rgba(14,13,11,.72); backdrop-filter:blur(12px) saturate(1.2); border-bottom:1px solid var(--line-2); }
+  nav.scrolled{ background:rgba(8,7,10,.74); backdrop-filter:blur(12px) saturate(1.2); border-bottom:1px solid var(--line-2); }
   .navin{ width:100%; max-width:var(--maxw); padding:18px 32px; display:flex; align-items:center; justify-content:space-between; }
-  .mark{ display:flex; align-items:center; gap:11px; }
-  .tagmark{ width:22px; height:22px; flex:none; }
-  .word{ font-weight:900; font-stretch:120%; letter-spacing:.0em; font-size:18px; }
-  .word b{ color:var(--paper); } .word span{ color:var(--mute); font-weight:600; }
+  .mark{ display:flex; align-items:center; gap:13px; }
+  .tagmark{ width:27px; height:27px; flex:none; }
+  .word{ font-family:var(--font-display); font-weight:500; letter-spacing:.22em; font-size:16px; color:var(--paper); padding-left:2px; }
+  .word .div{ color:var(--mute-2); margin:0 10px; font-weight:300; letter-spacing:0; }
+  .word .os{ letter-spacing:.01em; text-transform:none; background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  @media(max-width:600px){ .word .div, .word .os{ display:none; } }
   .navright{ display:flex; align-items:center; gap:22px; }
   .navlink{ font-family:var(--font-mono),monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--mute); transition:color .2s; }
   .navlink:hover{ color:var(--beam); }
@@ -93,12 +100,16 @@
   /* HERO */
   .hero{ position:relative; min-height:100svh; display:flex; align-items:flex-end; overflow:hidden; z-index:5; }
   .hero-bg{ position:absolute; inset:0; z-index:0; }
-  .hero-bg video{ width:100%; height:100%; object-fit:cover; opacity:.5; }
+  .hero-bg video{ width:100%; height:100%; object-fit:cover; opacity:.2; }
   .hero-bg::after{ content:""; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(14,13,11,.55) 0%, rgba(14,13,11,.2) 40%, rgba(14,13,11,.82) 86%, var(--room) 100%); }
+    background:linear-gradient(180deg, rgba(8,7,10,.5) 0%, rgba(8,7,10,.2) 40%, rgba(8,7,10,.86) 88%, var(--room) 100%); }
+  .hero-prism{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .hero-prism svg{ width:100%; height:100%; display:block; }
+  .hero::after{ content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:linear-gradient(90deg, var(--room) 0%, rgba(8,7,10,.5) 38%, transparent 74%); }
   .hero-in{ position:relative; z-index:3; width:100%; max-width:var(--maxw); margin:0 auto; padding:0 32px 70px; }
   .hero h1{ margin:18px 0 0; max-width:17ch; }
-  .hero h1 em{ font-style:normal; color:var(--beam); }
+  .hero h1 em{ font-style:normal; background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .hero .lede{ margin:24px 0 0; }
   .hero .cta{ margin-top:34px; display:flex; gap:12px; flex-wrap:wrap; }
   .hero .telem{ position:absolute; top:104px; left:32px; z-index:3; color:var(--paper); opacity:.82;
@@ -195,22 +206,47 @@
     .dot{ animation:none; } html{ scroll-behavior:auto; }
     .reel .px{ top:0; height:100%; }
   }
+
+  /* ===== v11 spectrum system ===== */
+  @media(max-width:860px){ .hero .telem{ display:none; } }
+  .specrule{ height:2px; border:0; background:var(--spectrum); opacity:.5; width:100%; max-width:var(--maxw); margin:0 auto; }
+  .props{ padding:62px 0; border-top:1px solid var(--line-2); }
+  .propgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+  .prop{ padding:4px 38px; border-left:1px solid var(--line-2); }
+  .prop:first-child{ border-left:0; padding-left:0; }
+  .dotic{ width:36px; height:36px; display:block; margin-bottom:20px; }
+  .prop h3{ font-family:var(--font-display); font-size:19px; font-weight:500; letter-spacing:-.01em; line-height:1.32; color:var(--paper); max-width:19ch; margin:0; }
+  .prop h3 em{ font-style:normal; background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  @media(max-width:760px){ .propgrid{ grid-template-columns:1fr; gap:30px; } .prop{ border-left:0; padding:0; } }
+  .closeband .flip{ background:var(--spectrum); -webkit-background-clip:text; background-clip:text; color:transparent; }
 </style>
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to content</a>
 
+<!-- reusable prism + spectrum defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="spec" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F2A65A"/><stop offset=".18" stop-color="#F0876B"/><stop offset=".38" stop-color="#EC6F9E"/><stop offset=".56" stop-color="#B36BE0"/><stop offset=".74" stop-color="#6E74E8"/><stop offset=".88" stop-color="#4AA3F0"/><stop offset="1" stop-color="#5BD0D8"/>
+  </linearGradient>
+  <linearGradient id="specH" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#F2A65A"/><stop offset=".2" stop-color="#F0876B"/><stop offset=".4" stop-color="#EC6F9E"/><stop offset=".58" stop-color="#B36BE0"/><stop offset=".74" stop-color="#6E74E8"/><stop offset=".88" stop-color="#4AA3F0"/><stop offset="1" stop-color="#5BD0D8"/>
+  </linearGradient>
+  <symbol id="prism" viewBox="0 0 100 100">
+    <g fill="none" stroke="url(#spec)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M50 7 L12 66 L50 90 L88 66 Z"/>
+      <path d="M50 7 L50 90"/>
+      <path d="M50 7 L50 50 M12 66 L50 50 L88 66" opacity=".42"/>
+    </g>
+  </symbol>
+</defs></svg>
+
 <!-- NAV -->
 <nav id="nav">
   <div class="navin">
     <a class="mark" href="#top" aria-label="PrismLabs home">
-      <svg class="tagmark" viewBox="0 0 100 100" aria-hidden="true">
-        <rect x="2" y="2" width="96" height="96" rx="6" fill="none" stroke="#E9E7E0" stroke-width="6"/>
-        <rect x="24" y="22" width="14" height="56" fill="#E9E7E0"/>
-        <rect x="62" y="22" width="14" height="56" fill="#E9E7E0"/>
-        <rect x="38" y="43" width="24" height="14" fill="#F2A65A"/>
-      </svg>
-      <span class="word"><b>PRISM</b><span>LABS</span></span>
+      <svg class="tagmark" viewBox="0 0 100 100" aria-hidden="true"><use href="#prism"/></svg>
+      <span class="word">PRISMLABS<span class="div">/</span><span class="os">PrismOS</span></span>
     </a>
     <div class="navright">
       <a class="navlink hide-sm" href="#built">The proof</a>
@@ -227,6 +263,29 @@
       <source src="assets/hero-tutoring.mp4" type="video/mp4">
     </video>
   </div>
+  <div class="hero-prism" aria-hidden="true">
+    <svg viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="fan" x1="0" y1="0" x2="1" y2="0.5">
+          <stop offset="0" stop-color="#5BD0D8"/><stop offset=".22" stop-color="#4AA3F0"/><stop offset=".42" stop-color="#6E74E8"/><stop offset=".6" stop-color="#B36BE0"/><stop offset=".78" stop-color="#EC6F9E"/><stop offset=".92" stop-color="#F0876B"/><stop offset="1" stop-color="#F2A65A"/>
+        </linearGradient>
+        <filter id="g1" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="28"/></filter>
+        <filter id="g2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
+      </defs>
+      <g style="mix-blend-mode:screen">
+        <polygon points="745,352 850,360 790,720 80,720" fill="url(#fan)" opacity=".45" filter="url(#g1)"/>
+        <polygon points="763,356 828,360 700,720 360,720" fill="url(#fan)" opacity=".6"/>
+        <line x1="1015" y1="30" x2="780" y2="250" stroke="#fff" stroke-width="7" opacity=".45" filter="url(#g2)"/>
+        <line x1="1015" y1="30" x2="780" y2="250" stroke="#fff" stroke-width="2" opacity=".95"/>
+        <circle cx="780" cy="250" r="6" fill="#fff" filter="url(#g2)"/>
+      </g>
+      <g fill="none" stroke-linejoin="round">
+        <polygon points="815,165 718,360 912,360" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.82)" stroke-width="2"/>
+        <line x1="815" y1="165" x2="815" y2="360" stroke="rgba(255,255,255,.26)" stroke-width="1.2"/>
+        <line x1="718" y1="360" x2="815" y2="262" stroke="rgba(255,255,255,.16)" stroke-width="1"/>
+      </g>
+    </svg>
+  </div>
   <div class="ticks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="telem mono"><span class="dot"></span> DEPTH · SURFACE LOCKED · PROJECTING</div>
   <div class="hero-in">
@@ -239,6 +298,35 @@
     </div>
   </div>
 </header>
+
+<!-- VALUE PROPS (dot-matrix icons) -->
+<section class="props">
+  <div class="wrap propgrid">
+    <div class="prop reveal">
+      <svg class="dotic" viewBox="0 0 40 40" aria-hidden="true"><g fill="url(#spec)">
+        <circle cx="20" cy="20" r="2.3"/>
+        <circle cx="20" cy="9" r="1.5"/><circle cx="20" cy="31" r="1.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="31" cy="20" r="1.5"/>
+        <circle cx="12.4" cy="12.4" r="1.4"/><circle cx="27.6" cy="12.4" r="1.4"/><circle cx="12.4" cy="27.6" r="1.4"/><circle cx="27.6" cy="27.6" r="1.4"/>
+        <circle cx="20" cy="3.6" r="1"/><circle cx="20" cy="36.4" r="1"/><circle cx="3.6" cy="20" r="1"/><circle cx="36.4" cy="20" r="1"/>
+      </g></svg>
+      <h3>Ambient interfaces for <em>spatial intelligence.</em></h3>
+    </div>
+    <div class="prop reveal">
+      <svg class="dotic" viewBox="0 0 40 40" aria-hidden="true"><g fill="url(#spec)">
+        <circle cx="33" cy="20" r="1.5"/><circle cx="31.3" cy="26.5" r="1.5"/><circle cx="26.5" cy="31.3" r="1.5"/><circle cx="20" cy="33" r="1.5"/><circle cx="13.5" cy="31.3" r="1.5"/><circle cx="8.7" cy="26.5" r="1.5"/><circle cx="7" cy="20" r="1.5"/><circle cx="8.7" cy="13.5" r="1.5"/><circle cx="13.5" cy="8.7" r="1.5"/><circle cx="20" cy="7" r="1.5"/><circle cx="26.5" cy="8.7" r="1.5"/><circle cx="31.3" cy="13.5" r="1.5"/>
+      </g></svg>
+      <h3>The ambient operating layer.</h3>
+    </div>
+    <div class="prop reveal">
+      <svg class="dotic" viewBox="0 0 40 40" aria-hidden="true"><g fill="url(#spec)">
+        <circle cx="9" cy="10" r="1.6"/><circle cx="20" cy="10" r="1.6"/><circle cx="31" cy="10" r="1.6"/>
+        <circle cx="9" cy="20" r="1.6"/><circle cx="20" cy="20" r="1.6"/><circle cx="31" cy="20" r="1.6"/>
+        <circle cx="9" cy="30" r="1.6"/><circle cx="20" cy="30" r="1.6"/><circle cx="31" cy="30" r="1.6"/>
+      </g></svg>
+      <h3>Context at <em>every surface.</em></h3>
+    </div>
+  </div>
+</section>
 
 <!-- WHAT IT IS -->
 <section class="band stmt" id="main">
@@ -383,17 +471,14 @@
   </div>
 </section>
 
+<div class="wrap"><hr class="specrule"></div>
+
 <!-- FOOTER -->
 <footer>
   <div class="wrap footin">
     <a class="mark" href="#top">
-      <svg class="tagmark" viewBox="0 0 100 100" aria-hidden="true">
-        <rect x="2" y="2" width="96" height="96" rx="6" fill="none" stroke="#928C80" stroke-width="6"/>
-        <rect x="24" y="22" width="14" height="56" fill="#928C80"/>
-        <rect x="62" y="22" width="14" height="56" fill="#928C80"/>
-        <rect x="38" y="43" width="24" height="14" fill="#F2A65A"/>
-      </svg>
-      <span class="word"><b style="color:var(--mute)">PRISM</b><span>LABS</span></span>
+      <svg class="tagmark" viewBox="0 0 100 100" aria-hidden="true"><use href="#prism"/></svg>
+      <span class="word">PRISMLABS<span class="div">/</span><span class="os">PrismOS</span></span>
     </a>
     <span class="mono">The ambient OS for physical space</span>
     <span class="mono">© 2026 · Pre-seed · <a href="mailto:jonatechtv@gmail.com" style="color:var(--beam)">jonatechtv@gmail.com</a></span>
