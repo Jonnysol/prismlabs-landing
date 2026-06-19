@@ -1,0 +1,32 @@
+[
+  {
+    "id": "deck",
+    "name": "v3 — Deck (dark · Satoshi)",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "Dark viewfinder. Real footage, Satoshi, deck-tight. Video-first.",
+    "changes": "Full redesign off the cream look. Real prototype footage, ambient home demos, 3D scene renders, the OS-line hero, and the live Studio editor.",
+    "url": "./",
+    "branch": "main / level-four"
+  },
+  {
+    "id": "investor",
+    "name": "v2 — Investor (verbose)",
+    "status": "archived",
+    "date": "2026-06-18",
+    "vibe": "Cream + serif, expanded into a full pitch: market, why-now, moat, the ask.",
+    "changes": "Added five investor sections, real team, reworked demos. Thorough but long and template-ish.",
+    "url": "versions/investor/index.html",
+    "branch": "commit d9a7019"
+  },
+  {
+    "id": "original",
+    "name": "v1 — Original (cream · CDN)",
+    "status": "archived",
+    "date": "2026-06-18",
+    "vibe": "The first concept. Warm cream, Instrument Serif, terracotta accent. Elegant, but the AI-default look.",
+    "changes": "First build from the v5 HTML: fixed the broken email links, added a waitlist form. Uses the original CDN videos.",
+    "url": "versions/original/index.html",
+    "branch": "stable"
+  }
+]

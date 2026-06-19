@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex">
+<title>PrismLabs — version control</title>
+<link rel="preconnect" href="https://api.fontshare.com"><link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --room:#0E0D0B; --room-2:#16130F; --paper:#E9E7E0; --mute:#928C80; --line:rgba(233,231,224,.14); --beam:#F2A65A; --scan:#7FC9D2; --ok:#7FD0A0; }
+  *{ box-sizing:border-box; } html{ color-scheme:dark; }
+  body{ margin:0; background:var(--room); color:var(--paper); font-family:'Satoshi',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono{ font-family:'Space Mono',monospace; }
+  a{ color:inherit; }
+  header{ padding:34px 32px 18px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(14,13,11,.86); backdrop-filter:blur(12px); z-index:10; }
+  .htop{ display:flex; align-items:baseline; justify-content:space-between; gap:18px; flex-wrap:wrap; max-width:1200px; margin:0 auto; }
+  h1{ margin:0; font-weight:700; letter-spacing:-.02em; font-size:24px; }
+  h1 b{ color:var(--beam); }
+  .sub{ margin:4px 0 0; color:var(--mute); font-size:13px; }
+  .bar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .toggle{ display:flex; align-items:center; gap:9px; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); border:1px solid var(--line); border-radius:6px; padding:8px 12px; cursor:pointer; }
+  .toggle input{ accent-color:var(--beam); width:16px; height:16px; }
+  button{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; border:1px solid var(--line); background:#1d1a15; color:var(--paper); border-radius:6px; padding:9px 14px; cursor:pointer; }
+  button.go{ background:var(--beam); color:#100c06; border-color:var(--beam); font-weight:700; }
+  button:hover{ border-color:var(--beam); }
+  main{ max-width:1200px; margin:0 auto; padding:26px 32px 80px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:20px; }
+  .card{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--room-2); display:flex; flex-direction:column; transition:border-color .2s, transform .2s; }
+  .card.fav{ border-color:var(--beam); box-shadow:0 0 0 1px var(--beam); }
+  .shot{ position:relative; height:230px; overflow:hidden; background:#000; border-bottom:1px solid var(--line); cursor:pointer; }
+  .shot iframe{ position:absolute; top:0; left:0; width:1280px; height:820px; border:0; transform:scale(.305); transform-origin:0 0; pointer-events:none; }
+  .shot .open{ position:absolute; inset:0; z-index:2; display:flex; align-items:flex-end; padding:12px; opacity:0; transition:opacity .2s; background:linear-gradient(0deg,rgba(8,7,6,.7),transparent 55%); }
+  .shot:hover .open{ opacity:1; }
+  .shot .open span{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--beam); }
+  .badge{ position:absolute; top:10px; left:10px; z-index:3; font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; padding:4px 8px; border-radius:3px; background:rgba(8,7,6,.7); backdrop-filter:blur(4px); color:var(--mute); }
+  .badge.live{ color:#100c06; background:var(--ok); }
+  .meta{ padding:16px 17px 17px; display:flex; flex-direction:column; gap:9px; flex:1; }
+  .meta .top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .meta h3{ margin:0; font-size:16px; font-weight:700; letter-spacing:-.01em; }
+  .meta .date{ font-family:'Space Mono',monospace; font-size:10.5px; color:var(--mute); }
+  .meta .vibe{ margin:0; font-size:13px; line-height:1.5; color:#CFCBC0; }
+  .meta .chg{ margin:0; font-size:12px; line-height:1.5; color:var(--mute); }
+  .meta .brc{ font-family:'Space Mono',monospace; font-size:10px; color:var(--mute); letter-spacing:.04em; }
+  .actions{ display:flex; gap:8px; margin-top:auto; padding-top:6px; }
+  .actions a{ flex:1; text-align:center; text-decoration:none; }
+  .pick{ display:flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--mute); cursor:pointer; border:1px solid var(--line); border-radius:6px; padding:0 11px; }
+  .pick input{ accent-color:var(--beam); }
+  .notes{ width:100%; margin-top:22px; background:var(--room-2); color:var(--paper); border:1px solid var(--line); border-radius:8px; padding:12px; font-family:'Satoshi',sans-serif; font-size:13px; resize:vertical; min-height:70px; }
+  .foot{ display:flex; gap:10px; align-items:center; margin-top:14px; flex-wrap:wrap; }
+  .hint{ color:var(--mute); font-size:12px; }
+  #toast{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:var(--beam); color:#100c06; font-family:'Space Mono',monospace; font-size:12px; padding:10px 16px; border-radius:7px; opacity:0; transition:opacity .25s; z-index:50; }
+  #toast.show{ opacity:1; }
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <div>
+      <h1>PrismLabs <b>/</b> version control</h1>
+      <p class="sub">Every state we've built, side by side. Pick a favourite, flip the editor, send it back to Claude.</p>
+    </div>
+    <div class="bar">
+      <label class="toggle"><input type="checkbox" id="editorToggle"> Studio editor on site</label>
+      <button class="go" id="export">Export for Claude</button>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <textarea class="notes" id="notes" placeholder="Notes for Claude — what you like, what to change, which video goes where…"></textarea>
+  <div class="foot">
+    <button class="go" id="export2">Copy export</button>
+    <span class="hint">Favourite + editor state + notes get copied. Paste it back in chat and I'll act on exactly that.</span>
+  </div>
+</main>
+<div id="toast"></div>
+<script>
+  var fav = localStorage.getItem('pl_fav') || 'deck';
+  var notesEl = document.getElementById('notes');
+  notesEl.value = localStorage.getItem('pl_notes') || '';
+  notesEl.oninput = function(){ localStorage.setItem('pl_notes', notesEl.value); };
+
+  var editorEl = document.getElementById('editorToggle');
+  editorEl.checked = localStorage.getItem('pl_studio') === '1';
+  editorEl.onchange = function(){
+    if(editorEl.checked) localStorage.setItem('pl_studio','1'); else { localStorage.removeItem('pl_studio'); localStorage.removeItem('pl_studio_state'); }
+    flash(editorEl.checked ? 'Editor ON for the site' : 'Editor OFF');
+  };
+
+  function flash(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},1500); }
+
+  fetch('versions.json').then(function(r){return r.json();}).then(function(list){
+    var grid=document.getElementById('grid');
+    list.forEach(function(v){
+      var card=document.createElement('div'); card.className='card'+(v.id===fav?' fav':''); card.dataset.id=v.id;
+      card.innerHTML =
+        '<div class="shot" data-url="'+v.url+'">'+
+          '<span class="badge'+(v.status==='LIVE'?' live':'')+'">'+v.status+'</span>'+
+          '<iframe loading="lazy" src="'+v.url+'" title="'+v.name+'" tabindex="-1"></iframe>'+
+          '<div class="open"><span>↗ open full</span></div>'+
+        '</div>'+
+        '<div class="meta">'+
+          '<div class="top"><h3>'+v.name+'</h3><span class="date">'+v.date+'</span></div>'+
+          '<p class="vibe">'+v.vibe+'</p>'+
+          '<p class="chg">'+v.changes+'</p>'+
+          '<span class="brc">'+v.branch+'</span>'+
+          '<div class="actions">'+
+            '<a href="'+v.url+'" target="_blank"><button style="width:100%">View</button></a>'+
+            '<label class="pick"><input type="radio" name="fav" value="'+v.id+'"'+(v.id===fav?' checked':'')+'> Favourite</label>'+
+          '</div>'+
+        '</div>';
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll('.shot').forEach(function(s){ s.onclick=function(){ window.open(s.dataset.url,'_blank'); }; });
+    grid.querySelectorAll('input[name=fav]').forEach(function(r){ r.onchange=function(){
+      fav=r.value; localStorage.setItem('pl_fav',fav);
+      grid.querySelectorAll('.card').forEach(function(c){ c.classList.toggle('fav', c.dataset.id===fav); });
+      flash('Favourite: '+fav);
+    };});
+  });
+
+  function exportText(){
+    var list = [...document.querySelectorAll('.card .top h3')].map(function(h){return h.textContent;});
+    var out = 'PrismLabs — admin export\n'+
+      'Favourite version: '+fav+'\n'+
+      'Studio editor: '+(editorEl.checked?'ON':'OFF')+'\n'+
+      'Notes:\n'+(notesEl.value||'(none)');
+    navigator.clipboard.writeText(out).then(function(){flash('Copied — paste it to Claude');},function(){flash('Copy failed');});
+  }
+  document.getElementById('export').onclick=exportText;
+  document.getElementById('export2').onclick=exportText;
+</script>
+</body>
+</html>
