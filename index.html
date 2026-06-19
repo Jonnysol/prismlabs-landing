@@ -180,8 +180,9 @@
 
   /* footer */
   .closeband{ padding:130px 0; text-align:center; position:relative; z-index:5; border-top:1px solid var(--line-2); }
-  .closeband h2{ max-width:18ch; margin:0 auto; }
+  .closeband h2{ max-width:26ch; margin:0 auto; }
   .closeband em{ font-style:normal; color:var(--beam); }
+  .closeband .flip{ display:inline-block; color:var(--beam); transform-origin:50% 50%; backface-visibility:hidden; will-change:transform,opacity; }
   @media(max-width:740px){ .closeband{ padding:90px 0; } }
   footer{ position:relative; z-index:5; border-top:1px solid var(--line-2); padding:40px 0 54px; }
   .footin{ display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; }
@@ -378,7 +379,7 @@
 <!-- CLOSING -->
 <section class="closeband">
   <div class="wrap">
-    <h2 class="display reveal">Your home already has walls.<br/>We gave it <em>a mind.</em></h2>
+    <h2 class="display reveal">Your home already has <span class="flip" id="flipword">walls</span>.<br/>We gave it <em>a mind.</em></h2>
   </div>
 </section>
 
@@ -445,6 +446,24 @@
   const kick=()=>{ if(kicked) return; kicked=true; onScreen.forEach(tryPlay); };
   ['pointerdown','touchstart','scroll','keydown'].forEach(ev=>addEventListener(ev, kick, {once:true, passive:true}));
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) onScreen.forEach(tryPlay); });
+
+  // closing flip-book: cycle the surface word
+  (function(){
+    const el = document.getElementById('flipword');
+    if(!el || reduce) return;
+    const words = ['walls','tables','surfaces','bookshelves','floors','doors','counters','windows','desks','ceilings','mirrors','cabinets'];
+    let i = 0;
+    setInterval(()=>{
+      el.style.transition = 'transform .32s cubic-bezier(.6,0,.3,1), opacity .32s';
+      el.style.transform = 'rotateX(-90deg)'; el.style.opacity = '0';
+      setTimeout(()=>{
+        i = (i+1) % words.length; el.textContent = words[i];
+        el.style.transition = 'none'; el.style.transform = 'rotateX(90deg)'; void el.offsetHeight;
+        el.style.transition = 'transform .32s cubic-bezier(.6,0,.3,1), opacity .32s';
+        el.style.transform = 'rotateX(0deg)'; el.style.opacity = '1';
+      }, 320);
+    }, 2300);
+  })();
 </script>
 <script src="studio.js"></script>
 </body>
