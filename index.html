@@ -12,6 +12,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -21,9 +24,9 @@
     --beam:#F2A65A; --beam-deep:#C9742E; --scan:#7FC9D2;
     --maxw:1240px;
     /* studio-controllable */
-    --font-display:'Archivo'; --font-body:'Archivo'; --font-mono:'Space Mono';
+    --font-display:'Satoshi'; --font-body:'Satoshi'; --font-mono:'Space Mono';
     --hero-scale:1; --head-scale:1; --body-scale:1;
-    --disp-stretch:106%; --disp-weight:800; --disp-tracking:-.025em;
+    --disp-stretch:100%; --disp-weight:700; --disp-tracking:-.025em;
   }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; color-scheme:dark; }
@@ -176,6 +179,10 @@
   .ask .stat span{ display:block; margin-top:8px; font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); }
 
   /* footer */
+  .closeband{ padding:130px 0; text-align:center; position:relative; z-index:5; border-top:1px solid var(--line-2); }
+  .closeband h2{ max-width:18ch; margin:0 auto; }
+  .closeband em{ font-style:normal; color:var(--beam); }
+  @media(max-width:740px){ .closeband{ padding:90px 0; } }
   footer{ position:relative; z-index:5; border-top:1px solid var(--line-2); padding:40px 0 54px; }
   .footin{ display:flex; justify-content:space-between; align-items:center; gap:18px; flex-wrap:wrap; }
   .footin .mono{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute-2); }
@@ -223,8 +230,8 @@
   <div class="telem mono"><span class="dot"></span> DEPTH · SURFACE LOCKED · PROJECTING</div>
   <div class="hero-in">
     <span class="eyebrow">No headset · no glasses · no phone · no screen</span>
-    <h1 class="display">The <em>room</em> is the <em>interface.</em></h1>
-    <p class="lede">One device on your ceiling. It sees the room in 3D, projects onto any surface, and disappears.</p>
+    <h1 class="display">The ambient OS for <em>physical space.</em></h1>
+    <p class="lede">The room is the interface. One device on your ceiling sees it in 3D, projects onto any surface, and disappears.</p>
     <div class="cta">
       <a class="btn solid" href="#built">See it working ↓</a>
       <a class="btn" href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Investor%20Inquiry">For investors</a>
@@ -339,6 +346,13 @@
         <a class="btn" href="mailto:jonatechtv@gmail.com?subject=PrismLabs%20Early%20Access">Request access</a>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closeband">
+  <div class="wrap">
+    <h2 class="display reveal">Your home already has walls.<br/>We gave it <em>a mind.</em></h2>
   </div>
 </section>
 

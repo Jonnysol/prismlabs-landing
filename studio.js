@@ -7,20 +7,26 @@
   if (qs.has('studio')) localStorage.setItem('pl_studio', '1');
   if (localStorage.getItem('pl_studio') !== '1') return;
 
-  var DISPLAY = ['Archivo','Space Grotesk','Sora','Manrope','Inter Tight','Hanken Grotesk','Instrument Sans','Bricolage Grotesque','Syne','Unbounded','Familjen Grotesk','Schibsted Grotesk','Figtree','Anton'];
-  var BODY = ['Archivo','Inter','Inter Tight','Manrope','Hanken Grotesk','DM Sans','Figtree','Onest','IBM Plex Sans','Schibsted Grotesk'];
+  // Fontshare fonts load from a different CDN than Google Fonts.
+  var FONTSHARE = ['Satoshi','General Sans','Switzer','Clash Display','Clash Grotesk','Cabinet Grotesk'];
+  var DISPLAY = ['Satoshi','General Sans','Switzer','Clash Display','Clash Grotesk','Cabinet Grotesk','Archivo','Space Grotesk','Sora','Manrope','Inter Tight','Hanken Grotesk','Bricolage Grotesque','Syne','Unbounded','Anton'];
+  var BODY = ['Satoshi','General Sans','Switzer','Archivo','Inter','Inter Tight','Manrope','Hanken Grotesk','DM Sans','Figtree','IBM Plex Sans'];
   var MONO = ['Space Mono','JetBrains Mono','IBM Plex Mono','DM Mono','Spline Sans Mono','Red Hat Mono','Martian Mono'];
 
   var loaded = {};
   function loadFont(name) {
     if (!name || loaded[name]) return; loaded[name] = 1;
     var l = document.createElement('link'); l.rel = 'stylesheet';
-    l.href = 'https://fonts.googleapis.com/css2?family=' + name.replace(/ /g, '+') + ':wght@300;400;500;600;700;800;900&display=swap';
+    if (FONTSHARE.indexOf(name) >= 0) {
+      l.href = 'https://api.fontshare.com/v2/css?f[]=' + name.toLowerCase().replace(/ /g, '-') + '&display=swap';
+    } else {
+      l.href = 'https://fonts.googleapis.com/css2?family=' + name.replace(/ /g, '+') + ':wght@300;400;500;600;700;800;900&display=swap';
+    }
     document.head.appendChild(l);
   }
 
   var rootStyle = document.documentElement.style;
-  var DEF = { display:'Archivo', body:'Archivo', mono:'Space Mono', hero:1, head:1, bodys:1, weight:800, stretch:106, track:-2.5, beam:'#F2A65A' };
+  var DEF = { display:'Satoshi', body:'Satoshi', mono:'Space Mono', hero:1, head:1, bodys:1, weight:700, stretch:100, track:-2.5, beam:'#F2A65A' };
   var S = Object.assign({}, DEF, JSON.parse(localStorage.getItem('pl_studio_state') || '{}'));
 
   function apply() {
