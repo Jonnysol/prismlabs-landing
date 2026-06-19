@@ -1,12 +1,22 @@
 [
   {
+    "id": "b0ece6b",
+    "name": "v16 \u00b7 b0ece6b",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "v16: fix projected-reality section (split, video on the right), concrete props, copy",
+    "changes": "commit b0ece6b",
+    "url": "./",
+    "branch": "b0ece6b"
+  },
+  {
     "id": "2a5a9e8",
     "name": "v15 \u00b7 2a5a9e8",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "v15: lead with AR; reframe mechanism as 'projected reality'; highlight credentials",
     "changes": "commit 2a5a9e8",
-    "url": "./",
+    "url": "versions/2a5a9e8/index.html",
     "branch": "2a5a9e8"
   },
   {
