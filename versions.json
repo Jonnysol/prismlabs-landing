@@ -1,12 +1,22 @@
 [
   {
+    "id": "eed71b2",
+    "name": "v13 \u00b7 eed71b2",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "v13: kill the gradient, unify to one accent, video-first hero",
+    "changes": "commit eed71b2",
+    "url": "./",
+    "branch": "eed71b2"
+  },
+  {
     "id": "5912282",
     "name": "v12 \u00b7 5912282",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "v12: perfectionist polish",
     "changes": "commit 5912282",
-    "url": "./",
+    "url": "versions/5912282/index.html",
     "branch": "5912282"
   },
   {
