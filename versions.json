@@ -1,12 +1,22 @@
 [
   {
+    "id": "5912282",
+    "name": "v12 \u00b7 5912282",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "v12: perfectionist polish",
+    "changes": "commit 5912282",
+    "url": "./",
+    "branch": "5912282"
+  },
+  {
     "id": "9dbedd2",
     "name": "v11 \u00b7 9dbedd2",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "v11: PrismOS prism + spectrum rebrand",
     "changes": "commit 9dbedd2",
-    "url": "./",
+    "url": "versions/9dbedd2/index.html",
     "branch": "9dbedd2"
   },
   {
