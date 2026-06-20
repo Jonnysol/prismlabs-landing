@@ -1,12 +1,62 @@
 [
   {
+    "id": "6d17b1c",
+    "name": "v21 \u00b7 6d17b1c",
+    "status": "LIVE",
+    "date": "2026-06-19",
+    "vibe": "head: add og:image (branded 1200x630 card) + og:url/twitter image; align OG copy to current positioning; switch contact email to hi@meetprism.co \u2014 stays v16",
+    "changes": "commit 6d17b1c",
+    "url": "./",
+    "branch": "6d17b1c"
+  },
+  {
+    "id": "84abe64",
+    "name": "v20 \u00b7 84abe64",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "fix: .hl is a normal inline highlight (was a broken bordered chip); drop awkward 'That is why now' \u2014 text/style only, stays v16",
+    "changes": "commit 84abe64",
+    "url": "versions/84abe64/index.html",
+    "branch": "84abe64"
+  },
+  {
+    "id": "897f357",
+    "name": "v19 \u00b7 897f357",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "copy: apply edits from owner's PDF markup (hero subline/CTA, reel label, rooms VLM line, team headline) \u2014 text-only, stays v16",
+    "changes": "commit 897f357",
+    "url": "versions/897f357/index.html",
+    "branch": "897f357"
+  },
+  {
+    "id": "6d95503",
+    "name": "v18 \u00b7 6d95503",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "copy: box-highlight the why-now AI stack (periwinkle); email -> hi@prismlabs.vision (text-only, stays v16)",
+    "changes": "commit 6d95503",
+    "url": "versions/6d95503/index.html",
+    "branch": "6d95503"
+  },
+  {
+    "id": "3071fd4",
+    "name": "v17 \u00b7 3071fd4",
+    "status": "commit",
+    "date": "2026-06-19",
+    "vibe": "copy: hero HUD line -> 'The new generation of spatial computing' (text-only, stays v16)",
+    "changes": "commit 3071fd4",
+    "url": "versions/3071fd4/index.html",
+    "branch": "3071fd4"
+  },
+  {
     "id": "b0ece6b",
     "name": "v16 \u00b7 b0ece6b",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "v16: fix projected-reality section (split, video on the right), concrete props, copy",
     "changes": "commit b0ece6b",
-    "url": "./",
+    "url": "versions/b0ece6b/index.html",
     "branch": "b0ece6b"
   },
   {
