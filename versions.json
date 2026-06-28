@@ -1,12 +1,22 @@
 [
   {
+    "id": "2c3a7a8",
+    "name": "v22 \u00b7 2c3a7a8",
+    "status": "LIVE",
+    "date": "2026-06-27",
+    "vibe": "feat: founder intro video pop-out (click anywhere to play, auto-dismiss + replay)",
+    "changes": "commit 2c3a7a8",
+    "url": "./",
+    "branch": "2c3a7a8"
+  },
+  {
     "id": "6d17b1c",
     "name": "v21 \u00b7 6d17b1c",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-19",
     "vibe": "head: add og:image (branded 1200x630 card) + og:url/twitter image; align OG copy to current positioning; switch contact email to hi@meetprism.co \u2014 stays v16",
     "changes": "commit 6d17b1c",
-    "url": "./",
+    "url": "versions/6d17b1c/index.html",
     "branch": "6d17b1c"
   },
   {
