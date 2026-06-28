@@ -548,10 +548,7 @@
   #introPop{ position:fixed; inset:0; z-index:60; pointer-events:none; font-family:var(--font-body),system-ui,sans-serif; }
   #introPop[data-state="hidden"]{ display:none; }
 
-  .ipop-scrim{ position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .55s ease;
-    background:radial-gradient(130% 130% at 82% 92%, rgba(8,7,12,.5), rgba(4,3,6,.8));
-    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
-  #introPop.dim .ipop-scrim{ opacity:1; pointer-events:auto; }
+  /* No page dim: the intro plays as a non-blocking corner player, so the page stays visible and interactive. */
 
   .ipop-card{ --ipw:344px; position:absolute; right:24px; bottom:24px; width:var(--ipw);
     background:rgba(16,14,20,.9); border:1px solid var(--line); border-radius:12px; overflow:hidden;
@@ -655,7 +652,7 @@
     .ipop-pill{ right:12px; bottom:12px; }
   }
   @media(prefers-reduced-motion:reduce){
-    .ipop-card,.ipop-pill,.ipop-video,.ipop-poster,.ipop-scrim,.ipop-prog i{ transition:none !important; }
+    .ipop-card,.ipop-pill,.ipop-video,.ipop-poster,.ipop-prog i{ transition:none !important; }
     .ipop-play,.ipop-pill,.ipop-sweep,.ipop-tick{ animation:none !important; }
     .ipop-spot{ display:none !important; }
     #introPop[data-state="teaser"] .ipop-card.show:hover{ transform:none !important; }
@@ -663,7 +660,6 @@
 </style>
 
 <div id="introPop" data-state="hidden" aria-live="polite">
-  <div class="ipop-scrim"></div>
   <div class="ipop-card" role="dialog" aria-label="Founder intro video">
     <button class="ipop-close" type="button" aria-label="Close intro">&times;</button>
     <div class="ipop-stage">
@@ -705,7 +701,6 @@
   const playBtn = root.querySelector('.ipop-play');
   const muteBtn = root.querySelector('.ipop-mute');
   const closeBtn= root.querySelector('.ipop-close');
-  const scrim   = root.querySelector('.ipop-scrim');
   const pill    = root.querySelector('.ipop-pill');
   const pillLbl = root.querySelector('.ipop-pill-label');
   const prog    = root.querySelector('.ipop-prog');
@@ -717,13 +712,12 @@
   const fmt = s => { s=Math.max(0,Math.floor(s||0)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
   const setState = s => root.dataset.state = s;
   const showCard = on => card.classList.toggle('show', on);
-  const dim = on => root.classList.toggle('dim', on);
   const syncMute = () => muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
 
   function play(){
     clearTimeout(exitT);
     played = true; try{ sessionStorage.setItem('introSeen','1'); }catch(e){}
-    showCard(true); dim(true); setState('playing');
+    showCard(true); setState('playing');
     try{ video.currentTime = 0; }catch(e){}
     video.muted = false; syncMute();
     const p = video.play();
@@ -731,7 +725,7 @@
   }
   function collapse(label, delay){
     clearTimeout(exitT);
-    video.pause(); dim(false); showCard(false);
+    video.pause(); showCard(false);
     const lbl = label || (played ? 'Replay intro' : 'Play intro');
     exitT = setTimeout(()=>{ pillLbl.textContent = lbl; setState('pill'); }, reduceM ? 0 : (delay==null ? 460 : delay));
   }
@@ -745,7 +739,6 @@
   });
   pill.addEventListener('click', play);
   closeBtn.addEventListener('click', e=>{ e.stopPropagation(); collapse(); });
-  scrim.addEventListener('click', ()=> collapse('Replay intro'));
   muteBtn.addEventListener('click', e=>{ e.stopPropagation(); video.muted = !video.muted; syncMute(); });
 
   // a soft periwinkle light tracks the cursor over the teaser, like PrismOS lighting a surface
