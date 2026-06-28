@@ -508,7 +508,7 @@
   }
 
   // Play only what's on screen (mobile won't autoplay 10 videos at once).
-  const vids = [...document.querySelectorAll('video')];
+  const vids = [...document.querySelectorAll('video:not([data-intro])')];   // intro pop-out drives its own playback
   const onScreen = new Set();
   const tryPlay = v => { const p = v.play(); if (p && p.catch) p.catch(()=>{}); };
   const vIO = new IntersectionObserver((es)=>{
@@ -541,6 +541,242 @@
     }, 2300);
   })();
 </script>
+<!-- ============ FOUNDER INTRO POP-OUT (self-contained; delete this block to remove) ============ -->
+<style>
+  /* A glowing "Play me" card rises from the corner, expands to play a 60s intro,
+     auto-dismisses on end, and leaves a replay pill. Fixed, so it never scrolls away. */
+  #introPop{ position:fixed; inset:0; z-index:60; pointer-events:none; font-family:var(--font-body),system-ui,sans-serif; }
+  #introPop[data-state="hidden"]{ display:none; }
+
+  .ipop-scrim{ position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .55s ease;
+    background:radial-gradient(130% 130% at 82% 92%, rgba(8,7,12,.5), rgba(4,3,6,.8));
+    -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px); }
+  #introPop.dim .ipop-scrim{ opacity:1; pointer-events:auto; }
+
+  .ipop-card{ --ipw:344px; position:absolute; right:24px; bottom:24px; width:var(--ipw);
+    background:rgba(16,14,20,.9); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    -webkit-backdrop-filter:blur(16px) saturate(1.2); backdrop-filter:blur(16px) saturate(1.2);
+    box-shadow:0 26px 80px -28px rgba(0,0,0,.85), 0 0 0 1px rgba(157,163,255,.05);
+    transform:translateY(140%) scale(.96); opacity:0; transform-origin:100% 100%; pointer-events:auto;
+    transition:width .55s cubic-bezier(.16,1,.3,1), transform .68s cubic-bezier(.16,1,.3,1), opacity .5s ease, box-shadow .55s ease, border-color .3s ease; }
+  .ipop-card.show{ transform:none; opacity:1; }
+  #introPop[data-state="playing"] .ipop-card{ --ipw:464px;
+    box-shadow:0 34px 100px -24px rgba(0,0,0,.9), 0 0 0 1px rgba(157,163,255,.18), 0 0 70px -14px rgba(157,163,255,.42); }
+
+  .ipop-stage{ position:relative; aspect-ratio:16/9; background:#000; overflow:hidden; cursor:pointer; }
+  .ipop-poster,.ipop-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .ipop-video{ opacity:0; transition:opacity .55s ease; }
+  #introPop[data-state="playing"] .ipop-video{ opacity:1; }
+  #introPop[data-state="playing"] .ipop-poster{ opacity:0; transition:opacity .55s ease; }
+  .ipop-stage::after{ content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, rgba(8,7,10,.1) 0%, transparent 24%, transparent 62%, rgba(8,7,10,.5) 100%); }
+
+  /* The whole teaser is the click target; these effects "call" the click without shouting. */
+  #introPop[data-state="teaser"] .ipop-card{ cursor:pointer; }
+  #introPop[data-state="teaser"] .ipop-card.show:hover{ transform:translateY(-5px);
+    border-color:rgba(157,163,255,.42);
+    box-shadow:0 40px 100px -30px rgba(0,0,0,.92), 0 0 0 1px rgba(157,163,255,.16), 0 0 56px -16px rgba(157,163,255,.5); }
+
+  /* idle "projector scan" gliding across the surface every few seconds */
+  .ipop-sweep{ position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0; mix-blend-mode:screen; transform:translateX(-130%);
+    background:linear-gradient(115deg, transparent 32%, rgba(157,163,255,.16) 46%, rgba(222,224,255,.34) 50%, rgba(157,163,255,.16) 54%, transparent 68%); }
+  #introPop[data-state="teaser"] .ipop-sweep{ animation:ipopSweep 5.4s cubic-bezier(.5,0,.3,1) infinite; }
+  @keyframes ipopSweep{ 0%{ transform:translateX(-130%); opacity:0; } 6%{ opacity:.9; } 26%{ transform:translateX(130%); opacity:0; } 100%{ transform:translateX(130%); opacity:0; } }
+
+  /* a periwinkle light that follows the cursor, like PrismOS projecting onto a surface */
+  .ipop-spot{ position:absolute; inset:0; z-index:6; pointer-events:none; opacity:0; mix-blend-mode:screen; transition:opacity .45s ease;
+    background:radial-gradient(200px 200px at var(--mx,72%) var(--my,42%), rgba(157,163,255,.22), rgba(157,163,255,.04) 46%, transparent 66%); }
+  #introPop[data-state="teaser"] .ipop-card.show:hover .ipop-spot{ opacity:1; }
+
+  /* viewfinder ticks flare as the scan passes, like a focus lock acquiring */
+  #introPop[data-state="teaser"] .ipop-tick{ animation:ipopTickFlare 5.4s ease-in-out infinite; }
+  @keyframes ipopTickFlare{ 0%,100%{ border-color:rgba(157,163,255,.5); } 12%{ border-color:rgba(202,206,255,.95); } 28%{ border-color:rgba(157,163,255,.5); } }
+
+  .ipop-tick{ position:absolute; width:13px; height:13px; z-index:3; pointer-events:none; border:1.5px solid rgba(157,163,255,.55); }
+  .ipop-tick.tl{ top:9px; left:9px; border-right:0; border-bottom:0; }
+  .ipop-tick.tr{ top:9px; right:9px; border-left:0; border-bottom:0; }
+  .ipop-tick.bl{ bottom:9px; left:9px; border-right:0; border-top:0; }
+  .ipop-tick.br{ bottom:9px; right:9px; border-left:0; border-top:0; }
+
+  .ipop-tag{ position:absolute; top:11px; left:11px; z-index:3; font-family:var(--font-mono),monospace; font-size:10px;
+    letter-spacing:.16em; text-transform:uppercase; color:rgba(233,231,240,.9); background:rgba(8,7,12,.5);
+    -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); padding:4px 8px; border-radius:3px; transition:opacity .3s; }
+  #introPop[data-state="playing"] .ipop-tag{ opacity:0; }
+
+  .ipop-prog{ position:absolute; left:0; right:0; bottom:0; height:9px; z-index:4; cursor:pointer; opacity:0; transition:opacity .35s; }
+  #introPop[data-state="playing"] .ipop-prog{ opacity:1; }
+  .ipop-prog::before{ content:""; position:absolute; left:0; right:0; bottom:0; height:3px; background:rgba(255,255,255,.16); }
+  .ipop-prog i{ position:absolute; left:0; bottom:0; height:3px; width:0; background:var(--accent); box-shadow:0 0 10px rgba(157,163,255,.9); transition:width .12s linear; }
+
+  .ipop-close{ position:absolute; top:9px; right:9px; z-index:5; width:30px; height:30px; border-radius:50%;
+    border:1px solid var(--line); background:rgba(8,7,10,.55); color:var(--paper); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+    cursor:pointer; font-size:17px; line-height:1; display:grid; place-items:center; transition:border-color .2s, color .2s, transform .25s, background .2s; }
+  .ipop-close:hover{ border-color:var(--accent); color:var(--accent); transform:rotate(90deg); background:rgba(8,7,10,.82); }
+
+  .ipop-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 13px 12px; min-height:55px; }
+  .ipop-meta{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .ipop-eyebrow{ font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--mute); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .ipop-sub{ font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.1em; color:var(--mute-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .ipop-time{ font-variant-numeric:tabular-nums; }
+
+  .ipop-play{ flex:none; display:inline-flex; align-items:center; gap:9px; font-family:var(--font-mono),monospace; font-size:12px;
+    font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#0a0913; background:var(--accent); border:0; border-radius:7px;
+    padding:11px 17px; cursor:pointer; transition:transform .2s ease; animation:ipopGlow 2.4s ease-in-out infinite; }
+  .ipop-play svg{ width:9px; height:11px; fill:#0a0913; }
+  .ipop-play:hover{ transform:translateY(-1px) scale(1.02); }
+  @keyframes ipopGlow{ 0%,100%{ box-shadow:0 0 0 0 rgba(157,163,255,.55), 0 8px 22px -8px rgba(157,163,255,.7); }
+    50%{ box-shadow:0 0 0 7px rgba(157,163,255,0), 0 12px 30px -8px rgba(157,163,255,1); } }
+
+  .ipop-mute{ flex:none; font-family:var(--font-mono),monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--mute); background:transparent; border:1px solid var(--line); border-radius:6px; padding:8px 12px; cursor:pointer; transition:color .2s, border-color .2s; }
+  .ipop-mute:hover{ color:var(--accent); border-color:var(--accent); }
+
+  /* footer shows the right controls per state */
+  #introPop:not([data-state="playing"]) .ipop-mute,
+  #introPop:not([data-state="playing"]) .ipop-time-wrap{ display:none; }
+  #introPop[data-state="playing"] .ipop-play,
+  #introPop[data-state="playing"] .ipop-tagline{ display:none; }
+
+  .ipop-pill{ position:absolute; right:24px; bottom:24px; pointer-events:auto; display:none; align-items:center; gap:9px;
+    font-family:var(--font-mono),monospace; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--paper);
+    background:rgba(16,14,20,.92); border:1px solid var(--line); border-radius:999px; padding:11px 17px 11px 15px; cursor:pointer;
+    -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); box-shadow:0 16px 44px -18px rgba(0,0,0,.75);
+    transform:translateY(120%); opacity:0; animation:ipopPillGlow 2.8s ease-in-out infinite;
+    transition:transform .55s cubic-bezier(.16,1,.3,1), opacity .4s, border-color .2s, color .2s; }
+  .ipop-pill svg{ width:9px; height:11px; fill:var(--accent); }
+  #introPop[data-state="pill"] .ipop-pill{ display:inline-flex; transform:none; opacity:1; }
+  .ipop-pill:hover{ border-color:var(--accent); color:var(--accent); }
+  @keyframes ipopPillGlow{ 0%,100%{ box-shadow:0 16px 44px -18px rgba(0,0,0,.75), 0 0 0 0 rgba(157,163,255,0); }
+    50%{ box-shadow:0 16px 44px -18px rgba(0,0,0,.75), 0 0 26px -6px rgba(157,163,255,.55); } }
+
+  @media(max-width:560px){
+    .ipop-card{ right:12px; left:12px; bottom:12px; width:auto !important; }
+    #introPop[data-state="playing"] .ipop-card{ --ipw:auto; }
+    .ipop-pill{ right:12px; bottom:12px; }
+  }
+  @media(prefers-reduced-motion:reduce){
+    .ipop-card,.ipop-pill,.ipop-video,.ipop-poster,.ipop-scrim,.ipop-prog i{ transition:none !important; }
+    .ipop-play,.ipop-pill,.ipop-sweep,.ipop-tick{ animation:none !important; }
+    .ipop-spot{ display:none !important; }
+    #introPop[data-state="teaser"] .ipop-card.show:hover{ transform:none !important; }
+  }
+</style>
+
+<div id="introPop" data-state="hidden" aria-live="polite">
+  <div class="ipop-scrim"></div>
+  <div class="ipop-card" role="dialog" aria-label="Founder intro video">
+    <button class="ipop-close" type="button" aria-label="Close intro">&times;</button>
+    <div class="ipop-stage">
+      <img class="ipop-poster" src="assets/intro.jpg" alt="Founder intro thumbnail" />
+      <video class="ipop-video" data-intro playsinline preload="none" poster="assets/intro.jpg">
+        <source src="assets/intro.mp4" type="video/mp4">
+      </video>
+      <span class="ipop-sweep" aria-hidden="true"></span>
+      <span class="ipop-tag">Intro &middot; 1:00</span>
+      <span class="ipop-tick tl"></span><span class="ipop-tick tr"></span>
+      <span class="ipop-tick bl"></span><span class="ipop-tick br"></span>
+      <div class="ipop-prog" aria-hidden="true"><i></i></div>
+    </div>
+    <span class="ipop-spot" aria-hidden="true"></span>
+    <div class="ipop-foot">
+      <div class="ipop-meta">
+        <span class="ipop-eyebrow">From the founder</span>
+        <span class="ipop-sub ipop-tagline">A minute on what we are building.</span>
+        <span class="ipop-sub ipop-time-wrap"><span class="ipop-time">0:00</span> / 1:00</span>
+      </div>
+      <button class="ipop-play" type="button" aria-label="Play the founder intro">
+        <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0 L10 6 L0 12 Z"/></svg> Play me
+      </button>
+      <button class="ipop-mute" type="button" aria-label="Mute or unmute">Mute</button>
+    </div>
+  </div>
+  <button class="ipop-pill" type="button" aria-label="Replay the founder intro">
+    <svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0 L10 6 L0 12 Z"/></svg> <span class="ipop-pill-label">Replay intro</span>
+  </button>
+</div>
+
+<script>
+(function(){
+  const root = document.getElementById('introPop');
+  if(!root) return;
+  const card    = root.querySelector('.ipop-card');
+  const stage   = root.querySelector('.ipop-stage');
+  const video   = root.querySelector('.ipop-video');
+  const playBtn = root.querySelector('.ipop-play');
+  const muteBtn = root.querySelector('.ipop-mute');
+  const closeBtn= root.querySelector('.ipop-close');
+  const scrim   = root.querySelector('.ipop-scrim');
+  const pill    = root.querySelector('.ipop-pill');
+  const pillLbl = root.querySelector('.ipop-pill-label');
+  const prog    = root.querySelector('.ipop-prog');
+  const progFill= root.querySelector('.ipop-prog i');
+  const timeEl  = root.querySelector('.ipop-time');
+  const reduceM = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let played=false, exitT=null;
+
+  const fmt = s => { s=Math.max(0,Math.floor(s||0)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+  const setState = s => root.dataset.state = s;
+  const showCard = on => card.classList.toggle('show', on);
+  const dim = on => root.classList.toggle('dim', on);
+  const syncMute = () => muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
+
+  function play(){
+    clearTimeout(exitT);
+    played = true; try{ sessionStorage.setItem('introSeen','1'); }catch(e){}
+    showCard(true); dim(true); setState('playing');
+    try{ video.currentTime = 0; }catch(e){}
+    video.muted = false; syncMute();
+    const p = video.play();
+    if(p && p.catch) p.catch(()=>{ video.muted = true; syncMute(); const r=video.play(); if(r&&r.catch) r.catch(()=>{}); });
+  }
+  function collapse(label, delay){
+    clearTimeout(exitT);
+    video.pause(); dim(false); showCard(false);
+    const lbl = label || (played ? 'Replay intro' : 'Play intro');
+    exitT = setTimeout(()=>{ pillLbl.textContent = lbl; setState('pill'); }, reduceM ? 0 : (delay==null ? 460 : delay));
+  }
+
+  // The whole card is the hit target: click anywhere (video, text, the button) to play.
+  card.addEventListener('click', e=>{
+    if(e.target.closest('.ipop-close, .ipop-mute, .ipop-prog')) return;   // real controls handle themselves
+    const st = root.dataset.state;
+    if(st==='teaser') play();
+    else if(st==='playing'){ video.paused ? video.play().catch(()=>{}) : video.pause(); }
+  });
+  pill.addEventListener('click', play);
+  closeBtn.addEventListener('click', e=>{ e.stopPropagation(); collapse(); });
+  scrim.addEventListener('click', ()=> collapse('Replay intro'));
+  muteBtn.addEventListener('click', e=>{ e.stopPropagation(); video.muted = !video.muted; syncMute(); });
+
+  // a soft periwinkle light tracks the cursor over the teaser, like PrismOS lighting a surface
+  card.addEventListener('pointermove', e=>{
+    if(root.dataset.state!=='teaser') return;
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    card.style.setProperty('--my', ((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+  addEventListener('keydown', e=>{ if(e.key==='Escape' && root.dataset.state==='playing') collapse('Replay intro'); });
+
+  prog.addEventListener('click', e=>{ e.stopPropagation();
+    const r=prog.getBoundingClientRect(), ratio=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
+    if(video.duration) video.currentTime = ratio*video.duration;
+  });
+  video.addEventListener('timeupdate', ()=>{
+    const d=video.duration||60;
+    progFill.style.width = (video.currentTime/d*100)+'%';
+    if(timeEl) timeEl.textContent = fmt(video.currentTime);
+  });
+  video.addEventListener('ended', ()=> collapse('Replay intro', 600));
+
+  function boot(){
+    let seen=false; try{ seen = !!sessionStorage.getItem('introSeen'); }catch(e){}
+    if(seen){ played=true; pillLbl.textContent='Replay intro'; setState('pill'); }
+    else { video.preload='auto'; showCard(true); setState('teaser'); }
+  }
+  setTimeout(boot, reduceM ? 250 : 1500);
+})();
+</script>
+<!-- ============ /FOUNDER INTRO POP-OUT ============ -->
 <script src="studio.js"></script>
 </body>
 </html>
