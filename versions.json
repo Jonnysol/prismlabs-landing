@@ -1,12 +1,22 @@
 [
   {
+    "id": "739069b",
+    "name": "v23 \u00b7 739069b",
+    "status": "LIVE",
+    "date": "2026-06-27",
+    "vibe": "fix: intro plays as a non-blocking corner player (drop the page-dim scrim)",
+    "changes": "commit 739069b",
+    "url": "./",
+    "branch": "739069b"
+  },
+  {
     "id": "2c3a7a8",
     "name": "v22 \u00b7 2c3a7a8",
-    "status": "LIVE",
+    "status": "commit",
     "date": "2026-06-27",
     "vibe": "feat: founder intro video pop-out (click anywhere to play, auto-dismiss + replay)",
     "changes": "commit 2c3a7a8",
-    "url": "./",
+    "url": "versions/2c3a7a8/index.html",
     "branch": "2c3a7a8"
   },
   {
